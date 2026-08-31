@@ -1,0 +1,54 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "",
+  "TECHNICAL DATA": {
+    "Country": "",
+    "Version": "",
+    "Migration - Origin from Host": "",
+    "Asynchronous?": "",
+    "Transactional?": "",
+    "Asynchronous Consumers": [
+      {
+        "Service Identifier": ""
+      }
+    ],
+    "Transaction Identifier": "",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "",
+        "Method": "",
+        "Description": ""
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "",
+        "Severity": "",
+        "Description of the error situation": ""
+      }
+    ],
+    "Events to which it is subscribed": [
+      {
+        "Functional name": ""
+      }
+    ]
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "",
+        "Mandatory?": "",
+        "APX data type": "",
+        "Description": ""
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "",
+        "Mandatory?": "",
+        "APX data type": "",
+        "Description": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "Country": ["ES", "MX", "PE", "CO", "US", "GL", "AR", "Common"],
+  "Asynchronous?": ["Yes", "No"],
+  "Transactional?": ["Yes", "No"],
+  "Severity": [
+    "04 - WARNING",
+    "06 - ERROR NO ROLLBACK",
+    "08 - ERROR WITH ROLLBACK"
+  ],
+  "APX data type": [
+    "compound",
+    "double",
+    "long",
+    "string",
+    "file",
+    "date",
+    "boolean",
+    "dto"
+  ],
+  "Mandatory?": ["Yes", "No"]
+}

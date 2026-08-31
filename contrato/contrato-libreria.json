@@ -1,0 +1,62 @@
+{
+  "LIBRARY - FUNCTIONAL GROUPING DESCRIPTION": "",
+  "TECHNICAL DATA": {
+    "Visibility": "",
+    "Library Type": "",
+    "For other, indicate": ""
+  },
+  "EXECUTE - METHODS SUMMARY": [
+    {
+      "Method name": "",
+      "Brief description": "",
+      "DESCRIPTION OF THE FUNCTIONALITY": "",
+      "Accessed libraries": [
+        {
+          "Library Identifier": "",
+          "Country": "",
+          "Method": "",
+          "Description": ""
+        }
+      ],
+      "Other accesses": [
+        {
+          "Access Type": "",
+          "Country": "",
+          "Identifier": "",
+          "Access": "",
+          "Description": ""
+        }
+      ],
+      "Error Management": [
+        {
+          "Error Code": "",
+          "Description of the error situation": ""
+        }
+      ],
+      "Event that is generated": [
+        {
+          "Functional name": "",
+          "Technical Identifier": ""
+        }
+      ],
+      "PARAMETERS": {
+        "Input Parameters": [
+          {
+            "Name of APX field": "",
+            "Mandatory?": "",
+            "Format Type": "",
+            "Description": ""
+          }
+        ],
+        "Output Parameters": [
+          {
+            "Name of APX field": "",
+            "Mandatory?": "",
+            "Format Type": "",
+            "Description": ""
+          }
+        ]
+      }
+    }
+  ]
+}

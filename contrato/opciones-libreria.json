@@ -1,0 +1,38 @@
+{
+  "Visibility": ["Private", "Public", "Other"],
+  "Library Type": ["On-line", "Batch", "Both"],
+  "Country": ["ES", "MX", "PE", "CO", "US", "GL", "AR", "Common"],
+  "Access Type": [
+    "Elastic",
+    "Document Manager",
+    "JDBC",
+    "JPA",
+    "Document Handling",
+    "MongoDB",
+    "Rules Engine",
+    "Proxy Service",
+    "Multichannel Service",
+    "IMSConnect",
+    "Neo4j",
+    "Remote Service"
+  ],
+  "Format Type": [
+    "array",
+    "bean",
+    "boolean",
+    "byte",
+    "char",
+    "date",
+    "double",
+    "float",
+    "int",
+    "list",
+    "long",
+    "map",
+    "queue",
+    "set",
+    "short",
+    "string"
+  ],
+  "Mandatory?": ["No", "Yes"]
+}
