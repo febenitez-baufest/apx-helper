@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APX Helper</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>APX Helper</h1>
+  <p>Importá el contrato JSON generado por el agente y obtené la hoja APX rellenada.</p>
+</header>
+
+<main>
+  <ol class="steps">
+    <li id="step-1" class="active"><span>1</span> Tipo de contrato</li>
+    <li id="step-2"><span>2</span> Importar JSON</li>
+    <li id="step-3"><span>3</span> Resultado</li>
+  </ol>
+
+  <section id="panel-kind" class="panel">
+    <h2>¿Qué vas a cargar?</h2>
+    <div class="cards">
+      <button class="card" data-kind="transaction">
+        <strong>Transacción</strong>
+        <span>Un contrato por transacción. Si el archivo trae varias, se genera un libro con una hoja por cada una.</span>
+      </button>
+      <button class="card" data-kind="library">
+        <strong>Librería</strong>
+        <span>Un contrato por librería. Se genera la hoja principal más una hoja por cada método <code>execute*</code>.</span>
+      </button>
+    </div>
+  </section>
+
+  <section id="panel-upload" class="panel hidden">
+    <h2>Importar contrato <span id="kind-label" class="badge"></span></h2>
+    <div id="dropzone" class="dropzone">
+      <p>Arrastrá el archivo <code>.json</code> acá o hacé clic para elegirlo</p>
+      <p id="file-name" class="file-name"></p>
+      <input type="file" id="file-input" accept="application/json,.json" hidden>
+    </div>
+    <div id="library-id-wrapper" class="field hidden">
+      <label for="library-id">Identificador de librería (opcional)</label>
+      <input type="text" id="library-id" placeholder="Se toma del contrato si lo trae, p. ej. ADVSR500">
+    </div>
+    <div class="actions">
+      <button class="secondary" data-back="kind">Volver</button>
+      <button id="btn-process" class="primary" disabled>Procesar</button>
+    </div>
+    <p id="upload-error" class="error hidden"></p>
+  </section>
+
+  <section id="panel-result" class="panel hidden">
+    <h2>Resultado</h2>
+    <div id="result-meta" class="meta"></div>
+    <div id="summary" class="summary"></div>
+    <div class="actions">
+      <button class="secondary" data-back="kind">Cargar otro contrato</button>
+      <button id="btn-download" class="primary">Descargar hoja APX</button>
+    </div>
+    <h3>Pendientes para el desarrollador</h3>
+    <p class="hint">Cada pendiente está resaltado en ámbar dentro del Excel, en la celda indicada.</p>
+    <div class="filters">
+      <label><input type="checkbox" class="filter" value="missing" checked> Falta información</label>
+      <label><input type="checkbox" class="filter" value="review" checked> A revisar</label>
+      <label><input type="checkbox" class="filter" value="invalid" checked> Valor no permitido</label>
+    </div>
+    <table id="issues">
+      <thead>
+        <tr><th>Estado</th><th>Hoja</th><th>Celda</th><th>Campo</th><th>Detalle</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p id="no-issues" class="ok hidden">La hoja quedó completa: no hay pendientes.</p>
+  </section>
+</main>
+
+<div id="loader" class="loader hidden"><div class="spinner"></div><p>Procesando contrato…</p></div>
+
+<script src="app.js"></script>
+</body>
+</html>

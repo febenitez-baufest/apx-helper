@@ -75,6 +75,7 @@ Estos son los formatos exactos que debes producir y los valores válidos para ca
 {
   "LIBRARY - FUNCTIONAL GROUPING DESCRIPTION": "",
   "TECHNICAL DATA": {
+    "Library Identifier": "",
     "Visibility": "",
     "Library Type": "",
     "For other, indicate": ""
@@ -264,6 +265,7 @@ La ruta de los archivos depende del tipo de proyecto:
 - **Tipo B (lib standalone):** `<ID>/` y `<ID>IMPL/` en la raíz del proyecto
 
 #### 1. Lee el `pom.xml` de la interfaz
+- `<artifactId>` (o el nombre de la carpeta de la interfaz, p. ej. `ADVSR500`) → `Library Identifier`
 - `<description>` → `LIBRARY - FUNCTIONAL GROUPING DESCRIPTION`
 - `<dependencies>` → identificar el artifact DTO (`ADVSC___`) del que depende; lo necesitarás para describir los parámetros
 
