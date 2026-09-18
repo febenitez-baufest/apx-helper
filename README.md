@@ -173,8 +173,9 @@ python tools\audit_contracts.py
 python tools\inspect_sheets.py "..\hojas-apx\APX Transactions Global Sheet v1.1.xlsx"
 
 # Sincronizar los desplegables de las plantillas con opciones-*.json
-python tools\sync_template_options.py --dry-run
+# (sin --apply solo informa; es lo único que modifica las plantillas maestras)
 python tools\sync_template_options.py
+python tools\sync_template_options.py --apply
 ```
 
 `tests/test_consistencia.py` falla si alguien agrega una clave al contrato sin mapearla a una celda, o un valor de opciones que la plantilla no lista. Es la red de seguridad principal.

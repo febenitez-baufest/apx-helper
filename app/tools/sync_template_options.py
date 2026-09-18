@@ -1,6 +1,8 @@
 """Sincroniza la hoja 'Parameters (Do not remove)' de las plantillas con opciones-*.json.
 
-Es idempotente: se puede volver a ejecutar cuando cambien las listas del contrato.
+Es el ÚNICO punto del proyecto que modifica las plantillas maestras: los desplegables de las
+hojas de datos apuntan a rangos de esa hoja, así que ampliar una lista obliga a reescribirla.
+Por eso solo escribe con `--apply`; sin esa bandera se limita a informar de las diferencias.
 """
 
 from __future__ import annotations
@@ -37,7 +39,7 @@ COLUMN_SOURCE = {
 }
 
 
-def sync(template: Path, kind: str, *, dry_run: bool = False) -> list[str]:
+def sync(template: Path, kind: str, *, apply: bool = False) -> list[str]:
     options = load_options(kind)
     wb = load_workbook(template)
     ws = wb[PARAMS_SHEET]
@@ -70,18 +72,20 @@ def sync(template: Path, kind: str, *, dry_run: bool = False) -> list[str]:
             ws.cell(row=row, column=col).value = None
         changes.append(f"    {header}: {current} -> {values}")
 
-    if changes and not dry_run:
+    if changes and apply:
         wb.save(template)
     return changes
 
 
 if __name__ == "__main__":
-    dry_run = "--dry-run" in sys.argv
+    apply = "--apply" in sys.argv
+    pending = False
     for kind, pattern in ((TRANSACTION, TRANSACTION_TEMPLATE_GLOB), (LIBRARY, LIBRARY_TEMPLATE_GLOB)):
         template = find_template(pattern)
-        changes = sync(template, kind, dry_run=dry_run)
+        changes = sync(template, kind, apply=apply)
+        pending = pending or bool(changes)
         print(f"{template.name}: {'sin cambios' if not changes else ''}")
         for change in changes:
             print(change)
-    if dry_run:
-        print("\n(dry-run: no se escribió nada)")
+    if pending and not apply:
+        print("\n(simulación: no se escribió nada; vuelve a ejecutar con --apply para modificar las plantillas)")

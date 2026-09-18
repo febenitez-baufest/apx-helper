@@ -1,11 +1,20 @@
+import hashlib
+import io
 import json
 from copy import deepcopy
 from pathlib import Path
 
 import pytest
+from openpyxl import load_workbook
 
 from apx_helper import contracts
 from apx_helper.generator import render, render_library, render_transaction, render_transactions
+from apx_helper.settings import (
+    LIBRARY_TEMPLATE_GLOB,
+    TRANSACTION_TEMPLATE_GLOB,
+    find_template,
+    templates_dir,
+)
 
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
@@ -161,3 +170,34 @@ def test_varias_transacciones_en_un_solo_libro(transaction):
 def test_render_rechaza_mezclar_tipos(transaction, library):
     with pytest.raises(contracts.ContractError):
         render([transaction, library])
+
+
+def _sheet_values(ws) -> list[list]:
+    return [[cell.value for cell in row] for row in ws.iter_rows()]
+
+
+@pytest.mark.parametrize(
+    "glob, render_call",
+    [
+        (TRANSACTION_TEMPLATE_GLOB, lambda data: render_transactions([data, data])),
+        (LIBRARY_TEMPLATE_GLOB, lambda data: render_library(data, library_id="LIBTEST")),
+    ],
+)
+def test_hojas_fijas_de_la_plantilla_no_mutan(glob, render_call, transaction, library):
+    """'Parameters (Do not remove)' y 'Change Log' viajan intactas y el archivo maestro no se toca."""
+    template = find_template(glob)
+    before = hashlib.sha256(template.read_bytes()).hexdigest()
+    original = load_workbook(template)
+
+    data = transaction if glob is TRANSACTION_TEMPLATE_GLOB else library
+    generated = load_workbook(io.BytesIO(render_call(data).to_bytes()))
+
+    for name in ("Parameters (Do not remove)", "Change Log"):
+        assert _sheet_values(generated[name]) == _sheet_values(original[name])
+
+    assert hashlib.sha256(template.read_bytes()).hexdigest() == before
+
+
+def test_save_no_escribe_en_la_carpeta_de_plantillas(transaction):
+    with pytest.raises(ValueError):
+        render_transaction(transaction).save(templates_dir())
