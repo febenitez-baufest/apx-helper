@@ -125,9 +125,6 @@ def _text(value: Any) -> str:
     return str(value)
 
 
-def _needs_review(value: str) -> bool:
-    upper = value.upper()
-    return MISSING_INFO in upper or REVIEW_MARKER in upper
 
 
 class _Filler:
