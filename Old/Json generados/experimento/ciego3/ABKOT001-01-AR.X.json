@@ -1,0 +1,288 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Transaction to execute the creation of the pricing rules",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: execute() reads pricingRuleRequest through getPricingrule() and passes it to ABKOR001.executePostPricingRules. ABKOR001Impl.validatePostPricingRule validates effectiveDate.startDate and effectiveDate.endDate through PricingRuleValidator.validatePost, checks duplicate pricing rules with PricingRuleDuplicateValidator.checkIfPricingRuleAlreadyExistsForPost, and resolves each details value with PricingRuleRepository.fillDetailValues before persistence. 2. Decisions and branches: PricingRuleValidator.validatePost throws ABKO10000404 when !dateVal.isBlank(). PricingRuleDuplicateValidator.checkIfPricingRuleAlreadyExistsForPost returns without duplicate checks when details is null or empty. PostPricingRuleDuplicateValidator.validateVariableCandidates returns when no variable candidates exist; for each candidate it calls handleVariableExactMatch when conflictType is EXACT_MATCH and handlePaymentMethodOverlap when conflictType is PAYMENT_METHOD_OVERLAP. validateRegulatedCandidates returns when no variable payment methods or no regulated candidates exist, and handleRegulatedDuplicate only throws when the regulated candidate has the same fee. 3. Invoked libraries and methods: execute() invokes ABKOR001.executePostPricingRules. ABKOR001Impl.executePostPricingRules calls validatePostPricingRule, gets the audit user with getUserId, and calls persistNewPricingRule. persistNewPricingRule gets audit and pricing rule sequence ids, inserts audit data with PricingRuleRepository.insertAudit, inserts the pricing rule with PricingRuleRepository.insertPricingRule using PricingRuleMapper.mapToInsert, and inserts each detail with PricingRuleRepository.insertDetails. 4. Errors and subsequent actions: PricingRuleValidator.validatePost throws ABKO10000404 when effectiveDate.endDate is before effectiveDate.startDate. UtilPrDuplicateValidation.throwPricingRuleAlreadyExists throws ABKO10010401 when handleVariableExactMatch or handleRegulatedDuplicate detects an existing candidate with the same detail set and the same fee. PostPricingRuleDuplicateValidator.handleVariableExactMatch throws ABKO10010402 when an exact variable duplicate exists but its fee differs. UtilPrDuplicateValidation.throwPaymentMethodOverlap throws ABKO10010415 when a variable candidate shares at least one payment method with the same non-payment-method details. PricingRuleRepository.fillDetailValues throws ABKO10010004 when no lookup query exists for details.entityType, when the resolved detail value is null or blank, or when the lookup raises NoResultException. ABKOR001Impl.executePostPricingRules catches PricingRuleException, adds the advice with addAdviceWithDescription(e.getCode(), e.getDescription()), returns null, and execute() then applies Severity.EWR through assignSeverityError when adviceList is not empty. 5. Outputs and assignment conditions: when ABKOR001.executePostPricingRules completes, execute() calls setPricingrule(pricingRuleDTO) without a guard, so pricingRuleResponse is assigned even when the library returned null. On the success path persistNewPricingRule sets pricingRuleDTO.id to the generated prId after fillDetailValues has populated each details.value, and the same PricingRuleDTO is returned as pricingRuleResponse.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT001",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR001",
+        "Method": "executePostPricingRules",
+        "Description": "Validates pricing rule dates and duplicate conditions, resolves each mandatory detail value, and persists the new pricing rule with its audit and detail records."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10000404",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "End date can not be before than Start date"
+      },
+      {
+        "Error Code": "ABKO10010401",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010402",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010415",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleRequest",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Pricing rule data used by ABKOR001.executePostPricingRules to validate duplicates, resolve detail values, and persist the new pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.name",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule name used to populate pricingRuleName in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Fee data used to compare duplicate candidates and populate the persisted fee fields."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type used to compare duplicate candidates and populate feeType in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee value used to compare duplicate candidates and populate feeValue in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Effective date data used to validate the date range and populate startingDate and finishDate in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Start date used in PricingRuleValidator.validatePost and to populate startingDate in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date used in PricingRuleValidator.validatePost and to populate finishDate in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Detail list used to validate duplicates, resolve each detail value, and insert pricing rule detail records."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Detail identifier used to build duplicate-comparison keys, resolve the detail value query, and populate objectEntityId in PricingRuleRepository.insertDetails."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Entity type used to sort details, build duplicate-comparison keys, select the detail value query, and populate entityTypeId in PricingRuleRepository.insertDetails."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Precedence type used to populate precedenceType in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Progressive type used to populate progressiveType in PricingRuleMapper.mapToInsert."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Comments used to populate commentsDesc in PricingRuleMapper.mapToInsert."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRuleResponse",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Pricing rule returned by ABKOR001.executePostPricingRules after detail values are resolved and the generated pricing rule id is assigned."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returned as the generated pricing rule id assigned in ABKOR001Impl.persistNewPricingRule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returned as the pricing rule name; getName and setName generate a name when the value is null or blank."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Effective date data returned in the same PricingRuleDTO after validation and persistence."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Returned as the start date; setStartDate converts the value to UTC."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Returned as the end date; setEndDate converts the value to UTC and defaults it to 2099-12-31 when null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Recurrence time list returned without transformation inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Fee data returned in the same PricingRuleDTO after duplicate validation and persistence."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Returned without transformation inside pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Detail list returned after PricingRuleRepository.fillDetailValues resolves each details.value before persistence."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returned without transformation inside pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Mapped from the value returned by PricingRuleRepository.fillDetailValues for each detail lookup query."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned as the precedence type; getPrecedenceType and setPrecedenceType default the value to CUSTOMIZE when null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned as the progressive type; getProgressiveType and setProgressiveType default the value to UNIQUE when null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.status",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned as the status; getStatus defaults the value to PAA when null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse."
+      }
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+
+====================================================================================================
+## 1. ABKOT005-01-AR - clase concreta completa
+====================================================================================================
+C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT005-01-AR\src\main\java\com\bbva\abko\ABKOT00501ARTransaction.java
+    1| package com.bbva.abko;
+    2| 
+    3| import com.bbva.abko.dto.pricingrules.PricingRuleDTO;
+    4| import com.bbva.abko.lib.r005.ABKOR005;
+    5| import com.bbva.elara.domain.transaction.Advice;
+    6| import com.bbva.elara.domain.transaction.Severity;
+    7| import org.slf4j.Logger;
+    8| import org.slf4j.LoggerFactory;
+    9| 
+   10| import java.util.List;
+   11| 
+   12| /**
+   13|  * Approves the creation of a pending approval pricing rule
+   14|  *
+   15|  */
+   16| public class ABKOT00501ARTransaction extends AbstractABKOT00501ARTransaction {
+   17| 
+   18| 	private static final Logger LOGGER = LoggerFactory.getLogger(ABKOT00501ARTransaction.class);
+   19| 
+   20| 	/**
+   21| 	 * The execute method...
+   22| 	 */
+   23| 	@Override
+   24| 	public void execute() {
+   25| 		ABKOR005 abkoR005 = this.getServiceLibrary(ABKOR005.class);
+   26| 		LOGGER.info("1- Executing ABKOT00501ARTransaction.execute() method");
+   27| 
+   28| 		PricingRuleDTO pricingRuleDTO = abkoR005.executeApprovePricingRule(this.getPricingruleid());
+   29| 
+   30| 		LOGGER.info("ABKOT00501AR With Success {}", pricingRuleDTO);
+   31| 		this.setPricingrule(pricingRuleDTO);
+   32| 
+   33| 		this.assignSeverityError(this.getAdviceList());
+   34| 	}
+   35| 
+   36| 	private void assignSeverityError(List<Advice> advices) {
+   37| 		if (!advices.isEmpty()) {
+   38| 			setSeverity(Severity.EWR);
+   39| 		}
+   40| 	}
+   41| }
+
+====================================================================================================
+## 1b. Clase abstracta - métodos con addParameter (salidas): ¿hay guarda antes de addParameter?
+====================================================================================================
+
+C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT005-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00501ARTransaction.java:33
+   33| 	}
+   34| 
+   35| 
+   36| 	/**
+   37| 	 * Set value for PricingRuleDTO output parameter pricingRule
+   38| 	 */
+   39| 	protected void setPricingrule(final PricingRuleDTO field) {
+   40| 		if (field == null) {
+   41| 			LOGGER.warn("Can't assign a null PricingRuleDTO to pricingRuleResponse");
+   42| 			return;
+   43| 		}
+   44| 		this.addParameter("pricingRuleResponse", field);
+   45| 	}
+
+====================================================================================================
+## 2. Librerías invocadas (getServiceLibrary + llamada)
+====================================================================================================
+
+ABKOR005.executeApprovePricingRule  interfaz=C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR005\src\main\java\com\bbva\abko\lib\r005\ABKOR005.java  impl=C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR005IMPL\src\main\java\com\bbva\abko\lib\r005\impl\ABKOR005Impl.java
+  Firma (ABKOR005.java:14): PricingRuleDTO executeApprovePricingRule(Long pricingRuleId);
+  Javadoc: The execute method... 	 * @return

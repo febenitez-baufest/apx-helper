@@ -1,0 +1,405 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Obtains information about the pricing rule. Allows you to filter by various parameters.",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "The transaction obtains the pricingRuleId input and, when it is negative, adds warning ABKO00000050, returns an empty pricingRules list, and finishes without invoking the library. Otherwise, it builds a PricingRuleGetFilterParams object with all input filters, including pricing rule, date, activity, segment, settlement, active, pagination, type, status, attribute description, and attribute name. It invokes ABKOR000.executeGetPricingRules with the filter object and assigns the returned DataPricingRuleGet to dataOfPricingRules. If the returned pricingRules list is empty, it adds warning ABKO00000040. The resulting data and pagination information are returned in dataOfPricingRules.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT000",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR000",
+        "Method": "executeGetPricingRules",
+        "Description": "Queries pricing rules using the supplied filters, applies pagination and filter defaults, maps database results to pricing rule DTOs, and returns pricing rule data with pagination information."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO00000050",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "Invalid parameter: pricingRuleId must be non-negative."
+      },
+      {
+        "Error Code": "ABKO00000040",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "No Data Founded."
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier used to filter the results."
+      },
+      {
+        "Name of APX field": "fromDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Start date used to filter the pricing rules."
+      },
+      {
+        "Name of APX field": "toDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date used to filter the pricing rules."
+      },
+      {
+        "Name of APX field": "activityId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Activity identifier used to filter the results."
+      },
+      {
+        "Name of APX field": "segmentId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Segment identifier used to filter the results."
+      },
+      {
+        "Name of APX field": "settlementId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Settlement identifier used to filter the results."
+      },
+      {
+        "Name of APX field": "onlyActive",
+        "Mandatory?": "No",
+        "APX data type": "boolean",
+        "Description": "Indicates whether the search filters active pricing rules."
+      },
+      {
+        "Name of APX field": "pageNumber",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Page number used for pagination."
+      },
+      {
+        "Name of APX field": "sizeOfPage",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Number of elements requested per page."
+      },
+      {
+        "Name of APX field": "pricingRuleType",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of pricing rule types used to filter the results."
+      },
+      {
+        "Name of APX field": "pricingRuleType.Type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule type value."
+      },
+      {
+        "Name of APX field": "pricingRuleStatus",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of pricing rule statuses used to filter the results."
+      },
+      {
+        "Name of APX field": "pricingRuleStatus.Type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule status value."
+      },
+      {
+        "Name of APX field": "attributeDesc",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute description used to filter the results."
+      },
+      {
+        "Name of APX field": "attributeName",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute name used to filter the results."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "dataOfPricingRules",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Container with the pricing rules and pagination information."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of pricing rules matching the supplied filters."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.id",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule name."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.active",
+        "Mandatory?": "Yes",
+        "APX data type": "boolean",
+        "Description": "Indicates whether the pricing rule is active."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule status."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule type."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.action",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Action associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.creationDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Pricing rule creation date."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Effective date information for the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Start date of the pricing rule validity period."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date of the pricing rule validity period."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Recurring time ranges associated with the effective date."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Day of the recurrence."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Starting hour of the recurrence."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Ending hour of the recurrence."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Fee information associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee value."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Settlement associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Settlement identifier."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Settlement name."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Segment associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Segment identifier."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Segment name."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Payment methods associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Payment method identifier."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.attributeName",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Payment method attribute name."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.category",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Payment method category."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Custom attributes associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Custom attribute identifier."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.name",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute name."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.value",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute value."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.packageId",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Package identifier associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Activities associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Activity identifier."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Activity name."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Pagination information for the pricing rule results."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.firstLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Link to the first result page."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.lastLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Link to the last result page."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.nextLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Link to the next result page."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.previousLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Link to the previous result page."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.page",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Current page number."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.totalPage",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Total number of pages."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.totalElements",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Total number of matching elements."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.pageSize",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Number of elements per page."
+      }
+    ]
+  }
+}

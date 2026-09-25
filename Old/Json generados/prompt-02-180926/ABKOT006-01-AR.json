@@ -1,0 +1,181 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Rejects the creation of a pricing rule",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: The transaction obtains pricingRuleId from the request with getPricingruleid(); if the parameter is null or cannot be converted to Long, getPricingruleid() returns null and the same null value is sent to ABKOR006.executeRejectPricingRule(pricingRuleId). Inside the library, PricingRuleRepository.getPricingRuleById(pricingRuleId) retrieves the pricing rule, RuleDetailsUtils.populatePricingRuleDetails(rule, pricingRuleId, repository, queriesMap) loads its active details and resolves each detail value, and PricingRuleValidator.validateReject(rule, pricingRuleId) verifies that a rule exists and that its status is PAA, PAU or PAD. 2. Decisions and branches: In fillDetailValues(details, queriesMap), if queriesMap has no query for a detail entity type, if the resolved detail value is null or blank, or if queryForString(...) raises NoResultException, the flow throws PricingRuleException ABKO10010004. In validateReject(rule, pricingRuleId), if rule is null the flow throws ABKO10000405; if rule.getStatus() is not PAA, PAU or PAD it throws ABKO10000412. In processRejection(rule, status, pricingRuleId, auditId, auditUserId, repository), if status is PAA or PAU the rule status is changed to REJ; if status is PAD the rule status is changed to SYC. 3. Libraries and methods invoked: The transaction calls ABKOR006.executeRejectPricingRule(pricingRuleId); that method uses PricingRuleRepository.getPricingRuleById(pricingRuleId), RuleDetailsUtils.populatePricingRuleDetails(rule, pricingRuleId, repository, queriesMap), PricingRuleValidator.validateReject(rule, pricingRuleId), PricingRuleRepository.getNextId(QueryConstants.GET_AUDIT_LOG_ID_SEQUENCE), PricingRuleRepository.insertAudit(auditId, EntityTypeEnum.PRL.getDbValue(), ruleId, DbConstants.UPDATE_OPERATION_ACRONYM, auditUserId), and PricingRuleRepository.updatePricingRuleStatus(ruleId, newStatus.getDbValue(), auditId, auditUserId). 4. Errors and subsequent actions: executeRejectPricingRule(pricingRuleId) catches PricingRuleException, converts it into addAdviceWithDescription(e.getCode(), e.getDescription()) and returns null; back in the transaction, assignSeverityError(getAdviceList()) sets Severity.EWR when the advice list is not empty. updatePricingRuleStatus(id, status, auditId, auditUserId) throws ABKO00000010 with description \"Update for approving/disapproving pricing rule with ID {id} status in the database failed\" when the update result is 0. 5. Outputs and assignment conditions: When the library returns a non-null PricingRuleDTO, setPricingrule(field) writes it to pricingRuleResponse; when the returned DTO is null, setPricingrule(field) skips the output assignment.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACI\u00d3N SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACI\u00d3N SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACI\u00d3N SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT006",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR006",
+        "Method": "executeRejectPricingRule",
+        "Description": "Retrieves the pricing rule by pricingRuleId, loads its details, validates that it can be rejected, records audit data and updates its status to REJ or SYC."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "Error Code": "ABKO10000405",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule with id: %s not found"
+      },
+      {
+        "Error Code": "ABKO10000412",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only PAA, PAU or PAD status rules can be rejected"
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Update for approving/disapproving pricing rule with ID {id} status in the database failed"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifies the pricing rule that is retrieved, validated and rejected."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRuleResponse",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returns the retrieved pricing rule after details are populated and status is updated when rejection succeeds."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the retrieved pricing rule identifier without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the retrieved pricing rule name without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returns the fee data without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the fee type without transformation inside pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Returns the fee value without transformation inside pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returns the effective date data without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Returns the effective start date without transformation inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Returns the effective end date without transformation inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Returns the recurrenceTimes list without transformation inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns each recurrence time day without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Returns each recurrence time start hour without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Returns each recurrence time end hour without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Returns the details list after populatePricingRuleDetails(rule, pricingRuleId, repository, queriesMap) loads the detail entries for the pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns each detail identifier without transformation inside pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns each detail entity type without transformation inside pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns each detail value after fillDetailValues(details, queriesMap) resolves it for the detail entity."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the precedence type without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the progressive type without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the updated status set to REJ for PAA or PAU rules, or to SYC for PAD rules."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the retrieved comments without transformation inside pricingRuleResponse."
+      }
+    ]
+  }
+}

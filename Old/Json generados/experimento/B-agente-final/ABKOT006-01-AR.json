@@ -1,0 +1,181 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Rejects the creation of a pricing rule",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: Reads pricingRuleId from the request and sends it to ABKOR006.executeRejectPricingRule to load the pricing rule, populate its details, validate that it exists and that its status is PAA, PAU, or PAD, obtain the next audit id, and read the request user code. 2. Decisions and branches: If the pricing rule is not found, the flow emits ABKO10000405. If its status is different from PAA, PAU, and PAD, the flow emits ABKO10000412. While resolving detail values, the flow emits ABKO10010004 if no query is configured for the detail entity type, if the resolved value is empty, or if the detail id does not exist. If the current status is PAA or PAU, the rejection changes the status to REJ; if it is PAD, the rejection changes the status to SYC. If the database update affects no rows, the flow emits ABKO00000010. 3. Accessed libraries and methods: The transaction invokes ABKOR006.executeRejectPricingRule, which reads the pricing rule, loads active details, resolves each detail value, validates the current status, inserts an audit row, and updates the pricing rule status in the database. 4. Errors and subsequent actions: Each PricingRuleException raised in the library is converted into an advice with the same code and description. After the library call, if the advice list is not empty, the transaction sets severity EWR. 5. Outputs and assignment conditions: When the library returns a non-null PricingRuleDTO, the transaction assigns it to pricingRuleResponse. If the library returns null, pricingRuleResponse is not assigned because setPricingrule returns before addParameter.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT006",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR006",
+        "Method": "executeRejectPricingRule",
+        "Description": "Rejects a pricing rule by loading it, resolving its details, validating that it can be rejected, registering an audit entry, updating its status, and returning the updated rule."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "Error Code": "ABKO10000405",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule with id: %s not found"
+      },
+      {
+        "Error Code": "ABKO10000412",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only PAA, PAU or PAD status rules can be rejected"
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Update for approving/disapproving pricing rule with ID {id} status in the database failed"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifies the pricing rule to retrieve, validate, and reject."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRuleResponse",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returns the updated pricing rule when the rejection library returns a non-null PricingRuleDTO."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the identifier of the rejected pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the pricing rule name mapped from the database, generating a default name when the mapped value is null or blank."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returns the fee information mapped for the pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the fee type mapped for the pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Returns the fee amount mapped for the pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returns the effective date information mapped for the pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Returns the pricing rule start date converted to UTC."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Returns the pricing rule end date converted to UTC, or 2099-12-31 in UTC when the mapped value is null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Returns the list of details associated with the pricing rule after resolving each detail value."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the identifier of each detail associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the entity type of each detail associated with the pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the resolved value for each pricing rule detail."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the precedence type mapped from the database, defaulting to CUSTOMIZE when the mapped value is null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the progressive type mapped from the database, defaulting to UNIQUE when the mapped value is null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the pricing rule status after rejection: REJ for rules in PAA or PAU, and SYC for rules in PAD."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the comments mapped from the pricing rule record."
+      }
+    ]
+  }
+}

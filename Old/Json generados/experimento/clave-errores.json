@@ -1,0 +1,451 @@
+{
+  "ABKOT000-01-AR": {
+    "libraries": [
+      [
+        "ABKOR000",
+        "executeGetPricingRules"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO00000050",
+        "severity": "04 - WARNING",
+        "description": "Invalid parameter: pricingRuleId must be non-negative.",
+        "candidates": [
+          "[log adyacente candidato] Invalid parameter: pricingRuleId must be non-negative."
+        ],
+        "prev": "Invalid parameter: pricingRuleId must be non-negative."
+      },
+      {
+        "code": "ABKO00000040",
+        "severity": "04 - WARNING",
+        "description": "No Data Founded.",
+        "candidates": [
+          "[log adyacente candidato] No Data Founded."
+        ],
+        "prev": "No Data Founded."
+      }
+    ]
+  },
+  "ABKOT001-01-AR": {
+    "libraries": [
+      [
+        "ABKOR001",
+        "executePostPricingRules"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO10000404",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "End date can not be before than Start date",
+        "candidates": [
+          "End date can not be before than Start date"
+        ],
+        "prev": "End date can not be before than Start date"
+      },
+      {
+        "code": "ABKO10010401",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010402",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010415",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010004",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Detail id: %s does not exist for entity type: %s",
+        "candidates": [
+          "Detail id: %s does not exist for entity type: %s"
+        ],
+        "prev": "Detail id: %s does not exist for entity type: %s"
+      }
+    ]
+  },
+  "ABKOT002-01-AR": {
+    "libraries": [
+      [
+        "ABKOR000",
+        "executeGetPricingRuleById"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO00000050",
+        "severity": "04 - WARNING",
+        "description": "Invalid parameter: pricingRuleId must be non-negative.",
+        "candidates": [
+          "[log adyacente candidato] Invalid parameter: pricingRuleId must be non-negative."
+        ],
+        "prev": "Invalid parameter: pricingRuleId must be non-negative."
+      },
+      {
+        "code": "ABKO00000040",
+        "severity": "04 - WARNING",
+        "description": "No Data Founded.",
+        "candidates": [
+          "[log adyacente candidato] No Data Founded."
+        ],
+        "prev": "No Data Founded."
+      }
+    ]
+  },
+  "ABKOT003-01-AR": {
+    "libraries": [
+      [
+        "ABKOR001",
+        "executeDeletePricingRules"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO10000405",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule with id: %s not found",
+        "candidates": [
+          "Pricing Rule with id: %s not found"
+        ],
+        "prev": "Pricing Rule with id: %s not found"
+      },
+      {
+        "code": "ABKO10000410",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "The pricing rule with id %s is inactive and cannot be deactivated",
+        "candidates": [
+          "The pricing rule with id %s is inactive and cannot be deactivated"
+        ],
+        "prev": "The pricing rule with id %s is inactive and cannot be deactivated"
+      },
+      {
+        "code": "ABKO10000409",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Only rules in state SYC can be deactivated.",
+        "candidates": [
+          "Only rules in state SYC can be deactivated."
+        ],
+        "prev": "Only rules in state SYC can be deactivated."
+      },
+      {
+        "code": "ABKO00000010",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "No se pudo desactivar la regla en la base de datos.",
+        "candidates": [
+          "No se pudo desactivar la regla en la base de datos."
+        ],
+        "prev": "No se pudo desactivar la regla en la base de datos."
+      }
+    ]
+  },
+  "ABKOT004-01-AR": {
+    "libraries": [
+      [
+        "ABKOR001",
+        "executePutPricingRules"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO10000405",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule with id: %s not found",
+        "candidates": [
+          "Pricing Rule with id: %s not found"
+        ],
+        "prev": "Pricing Rule with id: %s not found"
+      },
+      {
+        "code": "ABKO10000407",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "The pricing rule with id %s is inactive and cannot be modified",
+        "candidates": [
+          "The pricing rule with id %s is inactive and cannot be modified"
+        ],
+        "prev": "The pricing rule with id %s is inactive and cannot be modified"
+      },
+      {
+        "code": "ABKO10000408",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Only rules in state PAA, PAU, REJ, SYE or SYC can be modified.",
+        "candidates": [
+          "Only rules in state PAA, PAU, REJ, SYE or SYC can be modified."
+        ],
+        "prev": "Only rules in state PAA, PAU, REJ, SYE or SYC can be modified."
+      },
+      {
+        "code": "ABKO10000417",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "The pricing rule with id %s is in SYC state and has child rules, so it cannot be modified directly",
+        "candidates": [
+          "The pricing rule with id %s is in SYC state and has child rules, so it cannot be modified directly"
+        ],
+        "prev": "The pricing rule with id %s is in SYC state and has child rules, so it cannot be modified directly"
+      },
+      {
+        "code": "ABKO10000413",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Start date can not be before than current date",
+        "candidates": [
+          "Start date can not be before than current date"
+        ],
+        "prev": "Start date can not be before than current date"
+      },
+      {
+        "code": "ABKO10000414",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Only settlement detail, fee value and effective date start date can be modified for synchronized rules",
+        "candidates": [
+          "Only settlement detail, fee value and effective date start date can be modified for synchronized rules"
+        ],
+        "prev": "Only settlement detail, fee value and effective date start date can be modified for synchronized rules"
+      },
+      {
+        "code": "ABKO10000416",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing rule type %s cannot be modified. Only V, R or P are allowed",
+        "candidates": [
+          "Pricing rule type %s cannot be modified. Only V, R or P are allowed"
+        ],
+        "prev": "Pricing rule type %s cannot be modified. Only V, R or P are allowed"
+      },
+      {
+        "code": "ABKO10010401",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010415",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010004",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Detail id: %s does not exist for entity type: %s",
+        "candidates": [
+          "Detail id: %s does not exist for entity type: %s"
+        ],
+        "prev": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "code": "ABKO00000010",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Error de conexión con la base de datos",
+        "candidates": [
+          "Error de conexión con la base de datos"
+        ],
+        "prev": "Error de conexion con la base de datos"
+      }
+    ]
+  },
+  "ABKOT005-01-AR": {
+    "libraries": [
+      [
+        "ABKOR005",
+        "executeApprovePricingRule"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO10010004",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Detail id: %s does not exist for entity type: %s",
+        "candidates": [
+          "Detail id: %s does not exist for entity type: %s"
+        ],
+        "prev": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "code": "ABKO10000405",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule with id: %s not found",
+        "candidates": [
+          "Pricing Rule with id: %s not found"
+        ],
+        "prev": "Pricing Rule with id: %s not found"
+      },
+      {
+        "code": "ABKO10000411",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Only PAA, PAU or PAD status rules can be approved",
+        "candidates": [
+          "Only PAA, PAU or PAD status rules can be approved"
+        ],
+        "prev": "Only PAA, PAU or PAD status rules can be approved"
+      },
+      {
+        "code": "ABKO00000010",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Update for approving/disapproving pricing rule with ID {id} status in the database failed",
+        "candidates": [
+          "Update for approving/disapproving pricing rule with ID {id} status in the database failed"
+        ],
+        "prev": "Failed to update pricing rule status with ID={}"
+      }
+    ]
+  },
+  "ABKOT006-01-AR": {
+    "libraries": [
+      [
+        "ABKOR006",
+        "executeRejectPricingRule"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO10010004",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Detail id: %s does not exist for entity type: %s",
+        "candidates": [
+          "Detail id: %s does not exist for entity type: %s"
+        ],
+        "prev": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "code": "ABKO10000405",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule with id: %s not found",
+        "candidates": [
+          "Pricing Rule with id: %s not found"
+        ],
+        "prev": "Pricing Rule with id: %s not found"
+      },
+      {
+        "code": "ABKO10000412",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Only PAA, PAU or PAD status rules can be rejected",
+        "candidates": [
+          "Only PAA, PAU or PAD status rules can be rejected"
+        ],
+        "prev": "Only PAA, PAU or PAD status rules can be rejected"
+      },
+      {
+        "code": "ABKO00000010",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Update for approving/disapproving pricing rule with ID {id} status in the database failed",
+        "candidates": [
+          "Update for approving/disapproving pricing rule with ID {id} status in the database failed"
+        ],
+        "prev": "Update for approving/disapproving pricing rule with ID {id} status in the database failed"
+      }
+    ]
+  },
+  "ABKOT060-01-AR": {
+    "libraries": [
+      [
+        "ABKOR001",
+        "executePostMassivePricingRules"
+      ]
+    ],
+    "errors": [
+      {
+        "code": "ABKO10010420",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Massive pricing rule creation requires at least two ACT details",
+        "candidates": [
+          "Massive pricing rule creation requires at least two ACT details"
+        ],
+        "prev": "Massive pricing rule creation requires at least two ACT details"
+      },
+      {
+        "code": "ABKO10010421",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Massive pricing rule creation contains duplicated ACT details",
+        "candidates": [
+          "Massive pricing rule creation contains duplicated ACT details"
+        ],
+        "prev": "Massive pricing rule creation contains duplicated ACT details"
+      },
+      {
+        "code": "ABKO10010422",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Massive pricing rule creation contains an invalid detail",
+        "candidates": [
+          "Massive pricing rule creation contains an invalid detail"
+        ],
+        "prev": "Massive pricing rule creation contains an invalid detail"
+      },
+      {
+        "code": "ABKO10000404",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "End date can not be before than Start date",
+        "candidates": [
+          "End date can not be before than Start date"
+        ],
+        "prev": "End date can not be before than Start date"
+      },
+      {
+        "code": "ABKO10010401",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010402",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010415",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s",
+        "candidates": [
+          "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+        ],
+        "prev": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+      },
+      {
+        "code": "ABKO10010004",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Detail id: %s does not exist for entity type: %s",
+        "candidates": [
+          "Detail id: %s does not exist for entity type: %s"
+        ],
+        "prev": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "code": "ABKO00000010",
+        "severity": "08 - ERROR WITH ROLLBACK",
+        "description": "Could not insert massive pricing rule custom attribute",
+        "candidates": [
+          "Could not insert massive pricing rule custom attribute"
+        ],
+        "prev": "Could not insert massive pricing rule custom attribute"
+      }
+    ]
+  }
+}

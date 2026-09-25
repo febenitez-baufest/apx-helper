@@ -1,0 +1,54 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Deletes a pricing rule",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: the transaction reads the input parameter pricingRuleId and the request header parameter USERCODE to build auditUserId. 2. Decisions and branches: it invokes ABKOR001.executeDeletePricingRules(pricingRuleId, auditUserId); inside that call, if the pricing rule does not exist an advice is added and the flow ends, if the pricing rule is inactive an exception is raised and converted into an advice, and if the status is different from SYC an exception is raised and converted into an advice. 3. Invoked libraries and methods: when there are no advices after validation, the library obtains an audit identifier, inserts the audit record, and deactivates the pricing rule in the database. 4. Errors and subsequent actions: after the library returns, the transaction checks getAdviceList() and, when it is not empty, sets severity EWR for the generated advices. 5. Outputs and assignment conditions: the transaction does not assign output parameters because paramsOut is empty.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT003",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR001",
+        "Method": "executeDeletePricingRules",
+        "Description": "Validates that the pricing rule exists and can be deactivated, records the audit operation, and deactivates the pricing rule."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10000405",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule with id: %s not found"
+      },
+      {
+        "Error Code": "ABKO10000410",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "The pricing rule with id %s is inactive and cannot be deactivated"
+      },
+      {
+        "Error Code": "ABKO10000409",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only rules in state SYC can be deactivated."
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "No se pudo desactivar la regla en la base de datos."
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifies the pricing rule to be deactivated."
+      }
+    ],
+    "Output Parameters": []
+  }
+}

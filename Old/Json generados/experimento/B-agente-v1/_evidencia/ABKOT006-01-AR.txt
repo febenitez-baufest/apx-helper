@@ -1,0 +1,472 @@
+
+====================================================================================================
+## 1. ABKOT006-01-AR - clase concreta completa
+====================================================================================================
+C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\ABKOT00601ARTransaction.java
+    1| package com.bbva.abko;
+    2| 
+    3| import com.bbva.abko.dto.pricingrules.PricingRuleDTO;
+    4| import com.bbva.abko.lib.r006.ABKOR006;
+    5| import com.bbva.elara.domain.transaction.Advice;
+    6| import com.bbva.elara.domain.transaction.Severity;
+    7| import org.slf4j.Logger;
+    8| import org.slf4j.LoggerFactory;
+    9| 
+   10| import java.util.List;
+   11| 
+   12| /**
+   13|  * Rejects the creation of a pricing rule
+   14|  *
+   15|  */
+   16| public class ABKOT00601ARTransaction extends AbstractABKOT00601ARTransaction {
+   17| 
+   18| 	private static final Logger LOGGER = LoggerFactory.getLogger(ABKOT00601ARTransaction.class);
+   19| 
+   20| 	/**
+   21| 	 * The execute method...
+   22| 	 */
+   23| 	@Override
+   24| 	public void execute() {
+   25| 		ABKOR006 abkoR006 = this.getServiceLibrary(ABKOR006.class);
+   26| 		LOGGER.info("1- Executing ABKOT00601ARTransaction.execute() method");
+   27| 
+   28| 		PricingRuleDTO pricingRuleDTO = abkoR006.executeRejectPricingRule(this.getPricingruleid());
+   29| 
+   30| 		LOGGER.info("ABKOT00601AR With Success {}", pricingRuleDTO);
+   31| 		this.setPricingrule(pricingRuleDTO);
+   32| 
+   33| 		this.assignSeverityError(this.getAdviceList());
+   34| 	}
+   35| 
+   36| 	private void assignSeverityError(List<Advice> advices) {
+   37| 		if (!advices.isEmpty()) {
+   38| 			setSeverity(Severity.EWR);
+   39| 		}
+   40| 	}
+   41| 
+   42| }
+
+====================================================================================================
+## 1b. Clase abstracta - métodos con addParameter (salidas): ¿hay guarda antes de addParameter?
+====================================================================================================
+
+C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00601ARTransaction.java:32
+   32| 	}
+   33| 
+   34| 	/**
+   35| 	 * Set value for PricingRuleDTO output parameter pricingRule
+   36| 	 */
+   37| 	protected void setPricingrule(final PricingRuleDTO field) {
+   38| 		if (field == null) {
+   39| 			LOGGER.warn("Can't assign a null PricingRuleDTO to pricingRuleResponse");
+   40| 			return;
+   41| 		}
+   42| 		this.addParameter("pricingRuleResponse", field);
+   43| 	}
+
+====================================================================================================
+## 2. Librerías invocadas (getServiceLibrary + llamada)
+====================================================================================================
+
+ABKOR006.executeRejectPricingRule  interfaz=C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006\src\main\java\com\bbva\abko\lib\r006\ABKOR006.java  impl=C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java
+  Firma (ABKOR006.java:15): PricingRuleDTO executeRejectPricingRule(Long pricingRuleId);
+  Javadoc: The execute method... 	 * @return
+
+====================================================================================================
+## 3. Grafo de llamadas estático desde execute() (→ método, ⚑ emisión, ◆ severidad)
+====================================================================================================
+→ ABKOT00601ARTransaction.execute()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\ABKOT00601ARTransaction.java:23]
+  → ABKOR006Impl.executeRejectPricingRule()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:41]
+    → PricingRuleRepository.getPricingRuleById()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:40]
+      → PricingRuleMapper.mapRowToDto()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\mapper\PricingRuleMapper.java:40]
+    → RuleDetailsUtils.populatePricingRuleDetails()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR005IMPL\src\main\java\com\bbva\abko\lib\r005\utils\RuleDetailsUtils.java:15]
+      → PricingRuleRepository.getDetailsByRuleId()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:168]
+      → PricingRuleRepository.fillDetailValues()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:246]
+        ⚑ EMITE throw código=ABKO10010004  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:258]  throw new PricingRuleException( ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS, String.format(ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS_DESCRIPTION, d.getId(), d.getEntityType().getAsoValue()) )
+          descripción esperada: 'Detail id: %s does not exist for entity type: %s'
+        ⚑ EMITE throw código=ABKO10010004  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:269]  throw new PricingRuleException( ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS, String.format(ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS_DESCRIPTION, d.getId(), d.getEntityType().getAsoValue()) )
+          descripción esperada: 'Detail id: %s does not exist for entity type: %s'
+        ⚑ EMITE throw código=ABKO10010004  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:280]  throw new PricingRuleException( ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS, String.format(ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS_DESCRIPTION, d.getId(), d.getEntityType().getAsoValue()) )
+          descripción esperada: 'Detail id: %s does not exist for entity type: %s'
+    → PricingRuleValidator.validateReject()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\service\PricingRuleValidator.java:205]
+      ⚑ EMITE throw código=ABKO10000405  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\service\PricingRuleValidator.java:210]  throw new PricingRuleException( ErrorApxCodeConstants.PRICING_RULE_NOT_FOUND, ErrorApxCodeConstants.PRICING_RULE_NOT_FOUND_DESCRIPTION )
+        descripción esperada: 'Pricing Rule with id: %s not found'
+      ⚑ EMITE throw código=ABKO10000412  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\service\PricingRuleValidator.java:218]  throw new PricingRuleException( ErrorApxCodeConstants.PRICING_RULE_CAN_ONLY_BE_REJECTED_IN_VALID_STATE, ErrorApxCodeConstants.PRICING_RULE_CAN_ONLY_BE_REJECTED_IN_VALID_STATE_DESCRIPTION )
+        descripción esperada: 'Only PAA, PAU or PAD status rules can be rejected'
+    → PricingRuleRepository.getNextId()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:56]
+    → ABKOR006Impl.getUserId()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:79]
+    → ABKOR006Impl.processRejection()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:62]
+      → ABKOR006Impl.rejectRule()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:70]
+        → PricingRuleRepository.insertAudit()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:109]
+          → PricingRuleRepository.executeUpdate()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:164]
+        → PricingRuleRepository.updatePricingRuleStatus()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:354]
+          ⚑ EMITE throw código=ABKO00000010  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:367]  throw new PricingRuleException( ErrorApxCodeConstants.DATABASE_CONNECTION_ERROR, "Update for approving/disapproving pricing rule with ID " + id + " status in the database failed" )
+            descripción esperada: 'Update for approving/disapproving pricing rule with ID {id} status in the database failed'
+      ↺ ABKOR006Impl.rejectRule() (ya recorrido arriba)
+    ⚑ PROPAGA/NO RESUELTO advice código=?e.getCode()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:59]  addAdviceWithDescription(e.getCode(), e.getDescription())
+    → PricingRuleException.getCode()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\utils\PricingRuleException.java:10]
+    → PricingRuleException.getDescription()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\utils\PricingRuleException.java:12]
+  → AbstractABKOT00601ARTransaction.getPricingruleid()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00601ARTransaction.java:15]
+  → AbstractABKOT00601ARTransaction.setPricingrule()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00601ARTransaction.java:32]
+  → ABKOT00601ARTransaction.assignSeverityError()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\ABKOT00601ARTransaction.java:34]
+    ◆ SEVERITY EWR  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\ABKOT00601ARTransaction.java:38]
+
+====================================================================================================
+## 4. Cuerpo de cada método alcanzado (excepto la clase concreta, ya impresa)
+====================================================================================================
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:41 executeRejectPricingRule()
+   41| 	@Override
+   42| 	public PricingRuleDTO executeRejectPricingRule(Long pricingRuleId) {
+   43| 		LOGGER.info("Executing ABKOR006.executeRejectPricingRule() method with pricingRuleId: {}", pricingRuleId);
+   44| 		PricingRuleRepository repository = new PricingRuleRepository(this.jdbcUtils);
+   45| 
+   46| 		try {
+   47| 			PricingRuleDTO rule = repository.getPricingRuleById(pricingRuleId);
+   48| 
+   49| 			RuleDetailsUtils.populatePricingRuleDetails(rule, pricingRuleId, repository, queriesMap);
+   50| 
+   51| 			PricingRuleValidator.validateReject(rule, pricingRuleId);
+   52| 
+   53| 			Long auditId = repository.getNextId(QueryConstants.GET_AUDIT_LOG_ID_SEQUENCE);
+   54| 			String auditUserId = getUserId();
+   55| 
+   56| 			processRejection(rule, rule.getStatus(), pricingRuleId, auditId, auditUserId, repository);
+   57| 			return rule;
+   58| 		} catch (PricingRuleException e) {
+   59| 			this.addAdviceWithDescription(e.getCode(), e.getDescription());
+   60| 			return null;
+   61| 		}
+   62| 	}
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:40 getPricingRuleById()
+   40|     }
+   41| 
+   42|     /**
+   43|      * Obtiene una Pricing Rule por su ID y la mapea al DTO.
+   44|      */
+   45|     public PricingRuleDTO getPricingRuleById(Long id) {
+   46|         LOGGER.info("Searching for pricing rule with ID {} in the database", id);
+   47| 
+   48|         try {
+   49|             Map<String, Object> row = jdbcUtils.queryForMap(QueryConstants.GET_PRICING_RULE_BY_ID, id);
+   50|             LOGGER.info("Pricing rule with ID {} found in the database: {}", id, row);
+   51|             return PricingRuleMapper.mapRowToDto(row);
+   52|         } catch (NoResultException ex) {
+   53|             LOGGER.info("No pricing rule found with ID {} in the database", id);
+   54|             return null;
+   55|         }
+   56|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\mapper\PricingRuleMapper.java:40 mapRowToDto()
+   40|     }
+   41| 
+   42|     public static PricingRuleDTO mapRowToDto(Map<String, Object> row) {
+   43|         PricingRuleDTO dto = new PricingRuleDTO();
+   44|         dto.setId(((BigDecimal) row.get("PRICING_RULE_ID")).longValue());
+   45|         dto.setName((String) row.get("PRICING_RULE_NAME"));
+   46|         dto.setFee(new FeeDTO(
+   47|                 FeeTypeEnum.getFeeTypeEnumFromString((String) row.get("FEE_TYPE")),
+   48|                 ((BigDecimal) row.get("TOTAL_FEE_NUMBER")).doubleValue()
+   49|         ));
+   50|         dto.setVersion(((BigDecimal) row.get("ENTITY_VERSION_ID")).intValue());
+   51|         dto.setStatus(StatusEnum.getStatusEnumFromString((String) row.get("PRICING_RULE_STATUS_TYPE")));
+   52|         dto.setActive(Integer.parseInt(row.get("ACTIVE_TYPE").toString()) == 1);
+   53|         dto.setPricingRuleType((String) row.get("PRICING_RULE_TYPE"));
+   54| 
+   55|         EffectiveDateDTO date = new EffectiveDateDTO();
+   56|         date.setStartDate((Date) row.get("STARTING_DATE"));
+   57|         date.setEndDate((Date) row.get("FINISH_DATE"));
+   58|         dto.setEffectiveDate(date);
+   59| 
+   60|         dto.setComments((String) row.get("COMMENTS_DESC"));
+   61|         dto.setPrecedenceType((String) row.get("PRECEDENCE_TYPE"));
+   62|         dto.setProgressiveType((String) row.get("PROGRESSIVE_TYPE"));
+   63|         if (row.get("PARENT_PRICING_RULE_ID") != null) {
+   64|             dto.setParentId(((BigDecimal) row.get("PARENT_PRICING_RULE_ID")).longValue());
+   65|         }
+   66|         return dto;
+   67|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR005IMPL\src\main\java\com\bbva\abko\lib\r005\utils\RuleDetailsUtils.java:15 populatePricingRuleDetails()
+   15|     }
+   16| 
+   17|     public static void populatePricingRuleDetails(PricingRuleDTO rule, Long pricingRuleId, PricingRuleRepository repository, Map<Integer, String> queriesMap) {
+   18|         if (rule != null) {
+   19|             List<PricingRuleDetailDTO> detailDTOs = repository.getDetailsByRuleId(pricingRuleId);
+   20|             List<DetailsDTO> details = new ArrayList<>();
+   21| 
+   22|             for (PricingRuleDetailDTO d : detailDTOs) {
+   23|                 DetailsDTO detail = new DetailsDTO();
+   24|                 detail.setId(d.getObjectEntityId());
+   25|                 if (d.getEntityType() != null) {
+   26|                     detail.setEntityType(d.getEntityType());
+   27|                 }
+   28|                 details.add(detail);
+   29|             }
+   30| 
+   31|             repository.fillDetailValues(details, queriesMap);
+   32|             rule.setDetails(details);
+   33|         }
+   34|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:168 getDetailsByRuleId()
+  168|     }
+  169| 
+  170|     /**
+  171|      * Obtiene los detalles activos de una regla.
+  172|      */
+  173|     public List<PricingRuleDetailDTO> getDetailsByRuleId(Long prId) {
+  174|         LOGGER.info("2 - Searching for pricing rule details with PRICING_RULE_ID {} in the database", prId);
+  175| 
+  176|         List<Map<String, Object>> rows = jdbcUtils.queryForList(QueryConstants.GET_ACTIVE_PRICING_RULE_DETAILS_BY_PRICING_RULE_ID, prId);
+  177|         LOGGER.info("2.1 - Pricing rule details with PRICING_RULE_ID {} found in the database: {}", prId, rows);
+  178| 
+  179|         ArrayList<PricingRuleDetailDTO> list = new ArrayList<>();
+  180|         for (Map<String, Object> row : rows) {
+  181|             PricingRuleDetailDTO d = new PricingRuleDetailDTO();
+  182|             d.setId(((BigDecimal) row.get("PRICING_RULE_DETAIL_ID")).longValue());
+  183|             d.setPricingRuleId(prId);
+  184|             d.setEntityType((Number) row.get("ENTITY_TYPE_ID"));
+  185|             d.setObjectEntityId(((BigDecimal) row.get("OBJECT_ENTITY_ID")).longValue());
+  186|             d.setActive(Integer.parseInt(row.get("ACTIVE_TYPE").toString()) == 1);
+  187|             list.add(d);
+  188|         }
+  189| 
+  190|         LOGGER.info("2.3 - Pricing rule details found in the database: {}", list);
+  191| 
+  192|         return list;
+  193|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:246 fillDetailValues()
+  246|     }
+  247| 
+  248|     /**
+  249|      * Rellena las descripciones de los detalles (Activity name, Segment name, etc).
+  250|      */
+  251|     public void fillDetailValues(List<DetailsDTO> details, Map<Integer, String> queriesMap) {
+  252|         if (details == null) return;
+  253|         for (DetailsDTO d : details) {
+  254|             String query = queriesMap.get(d.getEntityType().getDbValue());
+  255|             if (query == null) {
+  256|                 LOGGER.error("No query configured to resolve detail value for entityTypeId: {} and id: {}",
+  257|                         d.getEntityType().getDbValue(), d.getId());
+  258|                 throw new PricingRuleException(
+  259|                         ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS,
+  260|                         String.format(ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS_DESCRIPTION,
+  261|                                 d.getId(), d.getEntityType().getAsoValue())
+  262|                 );
+  263|             }
+  264|             try {
+  265|                 String val = jdbcUtils.queryForString(query, d.getId());
+  266|                 if (val == null || val.trim().isEmpty()) {
+  267|                     LOGGER.error("Detail value not found for entityTypeId: {} and id: {}",
+  268|                             d.getEntityType().getDbValue(), d.getId());
+  269|                     throw new PricingRuleException(
+  270|                             ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS,
+  271|                             String.format(ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS_DESCRIPTION,
+  272|                                     d.getId(), d.getEntityType().getAsoValue())
+  273|                     );
+  274|                 }
+  275|                 d.setValue(val);
+  276|                 LOGGER.info("Filling detail value for entityTypeId: {} and id: {}. Retrieved value: {}",
+  277|                         d.getEntityType().getDbValue(), d.getId(), val);
+  278|             } catch (NoResultException e) {
+  279|                 LOGGER.error("Detail id: {} does not exist for entityTypeId: {}", d.getId(), d.getEntityType().getDbValue());
+  280|                 throw new PricingRuleException(
+  281|                         ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS,
+  282|                         String.format(ErrorApxCodeConstants.ENTITY_DETAILS_ID_NOT_EXISTS_DESCRIPTION,
+  283|                                 d.getId(), d.getEntityType().getAsoValue())
+  284|                 );
+  285|             }
+  286|         }
+  287|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\service\PricingRuleValidator.java:205 validateReject()
+  205|     }
+  206| 
+  207|     public static void validateReject(PricingRuleDTO rule, Long pricingRuleId) {
+  208|         if (rule == null) {
+  209|             LOGGER.info("Couldn't find rule with ID: {} while trying to reject it", pricingRuleId);
+  210|             throw new PricingRuleException(
+  211|                     ErrorApxCodeConstants.PRICING_RULE_NOT_FOUND,
+  212|                     ErrorApxCodeConstants.PRICING_RULE_NOT_FOUND_DESCRIPTION
+  213|             );
+  214|         }
+  215|         StatusEnum status = rule.getStatus();
+  216|         if (!(status == StatusEnum.PAA || status == StatusEnum.PAU || status == StatusEnum.PAD)) {
+  217|             LOGGER.info("Rule with ID {} is in {} status (not rejectable)", pricingRuleId, status);
+  218|             throw new PricingRuleException(
+  219|                     ErrorApxCodeConstants.PRICING_RULE_CAN_ONLY_BE_REJECTED_IN_VALID_STATE,
+  220|                     ErrorApxCodeConstants.PRICING_RULE_CAN_ONLY_BE_REJECTED_IN_VALID_STATE_DESCRIPTION
+  221|             );
+  222|         }
+  223|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:56 getNextId()
+   56|     }
+   57| 
+   58| 
+   59|     /**
+   60|      * Obtiene el siguiente valor de una secuencia de base de datos.
+   61|      * Recibe el SELECT completo como parámetro.
+   62|      */
+   63|     public Long getNextId(String sequenceSelect) {
+   64|         String id = jdbcUtils.queryForString(sequenceSelect);
+   65|         if (id == null) {
+   66|             LOGGER.debug("ID ES NULL");
+   67|             id = "0";
+   68|         }
+   69|         return Long.parseLong(id);
+   70|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:79 getUserId()
+   79| 	}
+   80| 
+   81| 	private String getUserId() {
+   82| 		return this.getRequestHeader().getHeaderParameter(RequestHeaderParamsName.USERCODE).toString();
+   83| 	}
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:62 processRejection()
+   62| 	}
+   63| 
+   64| 	private void processRejection(PricingRuleDTO rule, StatusEnum status, Long ruleId, Long auditId, String auditUserId, PricingRuleRepository repository) {
+   65| 		if (status == StatusEnum.PAA || status == StatusEnum.PAU) {
+   66| 			rejectRule(rule, ruleId, auditId, auditUserId, StatusEnum.REJ, repository);
+   67| 		} else if (status == StatusEnum.PAD) {
+   68| 			rejectRule(rule, ruleId, auditId, auditUserId, StatusEnum.SYC, repository);
+   69| 		}
+   70| 	}
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:70 rejectRule()
+   70| 	}
+   71| 
+   72| 	private void rejectRule(PricingRuleDTO rule, Long ruleId, Long auditId, String auditUserId, StatusEnum newStatus, PricingRuleRepository repository) {
+   73| 		String oldRuleStatus = rule.getStatus().name();
+   74| 		LOGGER.info("3 -- REJECTING RULE {} WITH OLD STATUS {} - NEW STATUS: {} --", ruleId, oldRuleStatus, newStatus);
+   75| 
+   76| 		rule.setStatus(newStatus);
+   77| 		repository.insertAudit(auditId, EntityTypeEnum.PRL.getDbValue(), ruleId, DbConstants.UPDATE_OPERATION_ACRONYM, auditUserId);
+   78| 		repository.updatePricingRuleStatus(ruleId, newStatus.getDbValue(), auditId, auditUserId);
+   79| 	}
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:109 insertAudit()
+  109|     }
+  110| 
+  111|     /**
+  112|      * Inserta el registro de auditoría.
+  113|      */
+  114|     public void insertAudit(Long auditId, Integer entityType, Long objId, String op, String user) {
+  115|         Map<String, Object> p = new HashMap<>();
+  116|         p.put(AUDIT_LOG_ID, auditId);
+  117|         p.put("entityTypeId", entityType);
+  118|         p.put("objectEntityId", objId);
+  119|         p.put("operationType", op);
+  120|         p.put(AUDIT_USER_ID, user);
+  121|         p.put(AUDIT_DATE, new Date());
+  122|         LOGGER.info("2.3 Audit log Id - {} - recibido despues de cargar registro de audit log con los siguientes datos: {}", auditId, p);
+  123|         int insertResult  = executeUpdate(QueryConstants.INSERT_AUDIT_LOG_ROW, p);
+  124|         LOGGER.info("2.3.1 INSERT AUDIT LOG RESULT: {}", insertResult == 1 ? SUCCESS_STRING : FAILURE_STRING);
+  125|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:164 executeUpdate()
+  164|     }
+  165| 
+  166|     private int executeUpdate(String query, Map<String, Object> params) {
+  167|         return jdbcUtils.update(query, params);
+  168|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:354 updatePricingRuleStatus()
+  354|     }
+  355| 
+  356|     public void updatePricingRuleStatus(Long id, String status, Long auditId, String auditUserId) {
+  357|         int result = this.jdbcUtils.update(QueryConstants.UPDATE_PRICING_RULE_STATUS, Map.of(
+  358|             "status", status,
+  359|             AUDIT_LOG_ID, auditId,
+  360|             AUDIT_DATE, new Date(),
+  361|             AUDIT_USER_ID, auditUserId,
+  362|             PRICING_RULE_ID, id
+  363|         ));
+  364| 
+  365|         if (result == 0) {
+  366|             LOGGER.error("Failed to update pricing rule status with ID={}", id);
+  367|             throw new PricingRuleException(
+  368|                 ErrorApxCodeConstants.DATABASE_CONNECTION_ERROR,
+  369|                 "Update for approving/disapproving pricing rule with ID " + id + " status in the database failed"
+  370|             );
+  371|         } else {
+  372|             LOGGER.info("Pricing rule status updated: ID={}, new status={}", id, status);
+  373|         }
+  374|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\utils\PricingRuleException.java:10 getCode()
+   10|     }
+   11|     // Getters para code y description
+   12|     public String getCode() { return code; }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\utils\PricingRuleException.java:12 getDescription()
+   12|     public String getCode() { return code; }
+   13|     public String getDescription() { return description; }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00601ARTransaction.java:15 getPricingruleid()
+   15| 	}
+   16| 
+   17| 	/**
+   18| 	 * Return value for input parameter pricingRuleId
+   19| 	 */
+   20| 	protected Long getPricingruleid() {
+   21| 		Object pricingRuleId = this.getParameter("pricingRuleId");
+   22| 		if (pricingRuleId == null) {
+   23| 			LOGGER.warn("pricingRuleId parameter from request is null");
+   24| 			return null;
+   25| 		}
+   26| 		try {
+   27| 			return Long.valueOf(pricingRuleId.toString());
+   28| 		} catch (NumberFormatException e) {
+   29| 			LOGGER.error("Couldn't convert pricingRuleId {} from request to Long", pricingRuleId, e);
+   30| 			return null;
+   31| 		}
+   32| 	}
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00601ARTransaction.java:32 setPricingrule()
+   32| 	}
+   33| 
+   34| 	/**
+   35| 	 * Set value for PricingRuleDTO output parameter pricingRule
+   36| 	 */
+   37| 	protected void setPricingrule(final PricingRuleDTO field) {
+   38| 		if (field == null) {
+   39| 			LOGGER.warn("Can't assign a null PricingRuleDTO to pricingRuleResponse");
+   40| 			return;
+   41| 		}
+   42| 		this.addParameter("pricingRuleResponse", field);
+   43| 	}
+
+====================================================================================================
+## 5. Secuencia DFS de primera emisión (orden requerido para Error Management)
+====================================================================================================
+1. ABKO10010004  primera emisión throw en fillDetailValues()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:258]
+     descripción candidata: 'Detail id: %s does not exist for entity type: %s'
+2. ABKO10000405  primera emisión throw en validateReject()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\service\PricingRuleValidator.java:210]
+     descripción candidata: 'Pricing Rule with id: %s not found'
+3. ABKO10000412  primera emisión throw en validateReject()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\service\PricingRuleValidator.java:218]
+     descripción candidata: 'Only PAA, PAU or PAD status rules can be rejected'
+4. ABKO00000010  primera emisión throw en updatePricingRuleStatus()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\java\com\bbva\abko\lib\r001\repository\PricingRuleRepository.java:367]
+     descripción candidata: 'Update for approving/disapproving pricing rule with ID {id} status in the database failed'
+   · no resuelto (?e.getCode()) en executeRejectPricingRule() [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\java\com\bbva\abko\lib\r006\impl\ABKOR006Impl.java:59]: addAdviceWithDescription(e.getCode(), e.getDescription())
+Severidades: EWR en assignSeverityError() [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\java\com\bbva\abko\ABKOT00601ARTransaction.java:38]
+
+====================================================================================================
+## 6. multilanguage-ES.properties y marcadores explícitos
+====================================================================================================
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR001IMPL\src\main\resources\multilanguage-ES.properties
+(vacío)
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR005IMPL\src\main\resources\multilanguage-ES.properties
+(vacío)
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR006IMPL\src\main\resources\multilanguage-ES.properties
+(vacío)
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT006-01-AR\src\main\resources\multilanguage-ES.properties
+(vacío)
+transactional: 0 coincidencias
+async: 0 coincidencias
+Sin evidencia explícita: Asynchronous? y Transactional? = marcador; Asynchronous Consumers y Events = []

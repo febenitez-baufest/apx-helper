@@ -1,0 +1,181 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Rejects the creation of a pricing rule",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: execute() obtains ABKOR006 with getServiceLibrary and passes getPricingruleid() to ABKOR006.executeRejectPricingRule; getPricingruleid() returns null when pricingRuleId is missing or cannot be converted to Long, and execute() performs no additional validations. 2. Decisions and branches: In ABKOR006Impl.executeRejectPricingRule, PricingRuleRepository.getPricingRuleById may return null or a PricingRuleDTO; RuleDetailsUtils.populatePricingRuleDetails only populates details when rule != null; PricingRuleValidator.validateReject only allows statuses PAA, PAU or PAD; processRejection sends PAA or PAU to rejectRule with new status REJ and PAD to rejectRule with new status SYC. 3. Invoked libraries and methods: ABKOT00601ARTransaction.execute calls ABKOR006.executeRejectPricingRule, which reads the rule through PricingRuleRepository.getPricingRuleById, maps it in PricingRuleMapper.mapRowToDto, loads detail rows through PricingRuleRepository.getDetailsByRuleId and resolves each detail value in PricingRuleRepository.fillDetailValues, validates rejection rules in PricingRuleValidator.validateReject, gets an audit id through PricingRuleRepository.getNextId, reads the request header user through getUserId, inserts the audit row through PricingRuleRepository.insertAudit and updates the rule status through PricingRuleRepository.updatePricingRuleStatus. 4. Errors and subsequent actions: PricingRuleRepository.fillDetailValues throws ABKO10010004 when no query is configured for a detail entity type, when the resolved detail value is blank, or when the detail lookup raises NoResultException; PricingRuleValidator.validateReject throws ABKO10000405 when getPricingRuleById returned null; PricingRuleValidator.validateReject throws ABKO10000412 when the rule status is not PAA, PAU or PAD; PricingRuleRepository.updatePricingRuleStatus throws ABKO00000010 when the status update affects 0 rows; ABKOR006Impl.executeRejectPricingRule catches each PricingRuleException, adds the advice with addAdviceWithDescription(e.getCode(), e.getDescription()) and returns null; assignSeverityError sets Severity.EWR when getAdviceList() is not empty. 5. Outputs and assignment conditions: execute() calls setPricingrule(pricingRuleDTO) with the library response; AbstractABKOT00601ARTransaction.setPricingrule adds pricingRuleResponse only when pricingRuleDTO is not null, so the output is omitted when ABKOR006Impl.executeRejectPricingRule returns null after adding advice.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT006",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR006",
+        "Method": "executeRejectPricingRule",
+        "Description": "Reject the requested pricing rule by loading it, populating its details, validating its current status, registering the audit row and updating the rule status."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "Error Code": "ABKO10000405",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule with id: %s not found"
+      },
+      {
+        "Error Code": "ABKO10000412",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only PAA, PAU or PAD status rules can be rejected"
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Update for approving/disapproving pricing rule with ID {id} status in the database failed"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier used to retrieve the rule, load its details and update its rejection status."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRuleResponse",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Pricing rule returned by ABKOR006.executeRejectPricingRule after loading its details and updating its rejection status."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier mapped from column PRICING_RULE_ID in PricingRuleMapper.mapRowToDto."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule name mapped from column PRICING_RULE_NAME in PricingRuleMapper.mapRowToDto; PricingRuleDTO.getName generates it from fee and details when the mapped value is blank."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Fee data mapped in PricingRuleMapper.mapRowToDto from columns FEE_TYPE and TOTAL_FEE_NUMBER."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type built in the FeeDTO constructor from column FEE_TYPE in PricingRuleMapper.mapRowToDto."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee value built in the FeeDTO constructor from column TOTAL_FEE_NUMBER in PricingRuleMapper.mapRowToDto."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Effective date data mapped in PricingRuleMapper.mapRowToDto from columns STARTING_DATE and FINISH_DATE."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Start date mapped from column STARTING_DATE in PricingRuleMapper.mapRowToDto."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date mapped from column FINISH_DATE in PricingRuleMapper.mapRowToDto; EffectiveDateDTO.setEndDate defaults it to 2099-12-31 when the column is null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Not populated by PricingRuleMapper.mapRowToDto; returned empty inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Not populated by PricingRuleMapper.mapRowToDto; returned empty inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Not populated by PricingRuleMapper.mapRowToDto; returned empty inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Not populated by PricingRuleMapper.mapRowToDto; returned empty inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "List of detail entries populated in RuleDetailsUtils.populatePricingRuleDetails, one element per row returned by PricingRuleRepository.getDetailsByRuleId."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Detail identifier mapped from column OBJECT_ENTITY_ID in PricingRuleRepository.getDetailsByRuleId and copied to DetailsDTO.id in RuleDetailsUtils.populatePricingRuleDetails."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Detail entity type mapped from column ENTITY_TYPE_ID in PricingRuleRepository.getDetailsByRuleId and copied to DetailsDTO.entityType in RuleDetailsUtils.populatePricingRuleDetails."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Detail value resolved by PricingRuleRepository.fillDetailValues with the query selected for the detail entity type."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Precedence type mapped from column PRECEDENCE_TYPE in PricingRuleMapper.mapRowToDto; PricingRuleDTO.setPrecedenceType defaults it to CUSTOMIZE when the column is null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Progressive type mapped from column PROGRESSIVE_TYPE in PricingRuleMapper.mapRowToDto; PricingRuleDTO.setProgressiveType defaults it to UNIQUE when the column is null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Rule status updated in ABKOR006Impl.rejectRule from the mapped PRICING_RULE_STATUS_TYPE value to REJ for PAA or PAU, or to SYC for PAD."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Comments mapped from column COMMENTS_DESC in PricingRuleMapper.mapRowToDto."
+      }
+    ]
+  }
+}

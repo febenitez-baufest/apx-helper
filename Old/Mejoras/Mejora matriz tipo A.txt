@@ -1,0 +1,35 @@
+Lista de mejoras/revisiones a realizar sobre la matriz de recoleccion del tipo A
+
+1. TECHNICAL DATA.Transactional? -> Revisar advices EWR
+
+2. TECHNICAL DATA.Accessed Libraries[].Description -> Revisar si conviene leer el método de la librería para obtener la description. 
+
+3. Revisar "Technical Data.Functional Map" (no esta en la matriz)
+
+4. TECHNICAL DATA.Error Management[].Severity -> Revisar equivalencia de severidades
+
+5. TECHNICAL DATA.Error Management[].Description of the error situation -> revisar "multilanguage-ES.properties, buscando la clave del error".
+
+6. TECHNICAL DATA.Events to which it is subscribed[].Functional name -> Revisar
+
+7. PARAMETERS.Input Parameters[].Mandatory? -> Revisar y cambiar "Elemento raíz en <paramsIn> -> @mandatory" por "@mandatory dentro de <parameter>".
+
+8. PARAMETERS.Input Parameters[].Description -> Mejorar el origen. Si es DTO se puede usar el package asociado (ej: "com.bbva.abko.dto.paymentmethods.PaymentMethodDTO") en busca de algún java doc. De no existir java doc, buscar la descripción para cada campo, en el flujo que lo utilice.
+
+9. PARAMETERS.Output Parameters[].Mandatory? -> Igual que el punto 7. 
+
+10. PARAMETERS.Output Parameters[].APX data type -> Cambiar "Aplicar el mismo mapeo definido para entradas" por mapeo explicito.
+
+11. PARAMETERS.Output Parameters[].Description -> Igual que el punto 8. 
+
+## Estado de decisiones implementadas
+
+- 1. `Transactional?` y severidad `EWR`: resuelto. `Transactional?` solo puede ser `Yes` con evidencia transaccional explícita; `EWR` se mapea a `08 - ERROR WITH ROLLBACK`.
+- 2. `Accessed Libraries[].Description`: resuelto con criterio mixto. Se prioriza el Javadoc de la interfaz y se revisa el método implementado y su uso cuando el Javadoc es insuficiente.
+- 3. `Technical Data.Functional Map`: descartado. No forma parte del contrato JSON de transacción ni de la matriz final.
+- 4. Equivalencia de severidades: resuelto. `WRN` → `04 - WARNING`, `ENR` → `06 - ERROR NO ROLLBACK`, `ERR` → `08 - ERROR WITH ROLLBACK`, `EWR` → `08 - ERROR WITH ROLLBACK`.
+- 5. `multilanguage-ES.properties`: resuelto. Es la fuente primaria para la descripción del error, con los respaldos definidos en el prompt.
+- 6. Eventos suscritos: resuelto. Se revisan listeners, consumers, anotaciones y beans de suscripción; no se confunden con eventos publicados.
+- 7 y 9. `@mandatory`: resuelto. Se toma del atributo del hijo directo concreto de `paramsIn` o `paramsOut`, nunca del contenedor.
+- 8 y 11. Descripciones de DTOs: resuelto. Se localiza el tipo y su Javadoc; después se permite una derivación controlada desde el uso verificable. Sin evidencia semántica se usa `NO HAY INFORMACIÓN SUFICIENTE`.
+- 10. Tipos de salida: resuelto. Se incorporó una tabla explícita de mapeo XML → tipo APX, aplicable a entradas y salidas.
