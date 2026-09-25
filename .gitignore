@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+salida/
+*.egg-info/
+.venv/
+
+ud-pricing-rules/*
+./ud-pricing-rules/*
+ud-pricing-rules/
