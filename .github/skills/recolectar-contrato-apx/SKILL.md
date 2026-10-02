@@ -8,6 +8,8 @@ argument-hint: "<raíz del proyecto APX> <ID de transacción o 'todas'> <carpeta
 
 La norma completa es el prompt [recolectar-contrato-apx-tipo-a](../../prompts/recolectar-contrato-apx-tipo-a.prompt.md). Esta skill no la reemplaza: automatiza la parte mecánica y convierte sus reglas en comprobaciones ejecutables. Si algo de aquí contradice la norma, prevalece la norma.
 
+El esquema canónico está incluido en [references/contrato-transaccion.json](references/contrato-transaccion.json). El proyecto APX analizado no necesita aportar una carpeta `contrato/`; si existe, se conserva únicamente como compatibilidad con ejecuciones antiguas.
+
 ## Reparto de trabajo
 
 | Lo hacen los scripts (no lo rehagas a mano) | Lo haces tú leyendo el código |

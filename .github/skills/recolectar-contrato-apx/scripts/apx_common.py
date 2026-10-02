@@ -58,10 +58,15 @@ def list_transactions(root: Path) -> list[str]:
 
 
 def contract_path(root: Path) -> Path:
-    for candidate in (root / "contrato" / "contrato-transaccion.json", root.parent / "contrato" / "contrato-transaccion.json"):
+    bundled = Path(__file__).resolve().parent.parent / "references" / "contrato-transaccion.json"
+    for candidate in (
+        bundled,
+        root / "contrato" / "contrato-transaccion.json",
+        root.parent / "contrato" / "contrato-transaccion.json",
+    ):
         if candidate.exists():
             return candidate
-    raise FileNotFoundError("No se encontró contrato/contrato-transaccion.json")
+    raise FileNotFoundError("No se encontró el contrato de transacción incluido en la skill")
 
 
 @lru_cache(maxsize=None)

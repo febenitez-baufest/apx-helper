@@ -60,7 +60,7 @@ La estructura muestra ubicaciones habituales. Para localizar una interfaz, imple
 
 ## 4. Contrato de salida inviolable
 
-Lee `contrato\contrato-transaccion.json` antes del análisis. Cada JSON final debe conservar exactamente sus claves, su orden, sus niveles de anidación y sus tipos. No renombres, agregues, elimines ni reordenes claves. No agregues campos de evidencia o análisis.
+Lee el esquema incluido en `recolectar-contrato-apx/references/contrato-transaccion.json` antes del análisis. Cada JSON final debe conservar exactamente sus claves, su orden, sus niveles de anidación y sus tipos. No renombres, agregues, elimines ni reordenes claves. No agregues campos de evidencia o análisis.
 
 Completa todos los campos. Usa estas representaciones canónicas:
 
@@ -351,7 +351,7 @@ Antes de responder, ejecuta una segunda comprobación completa e independiente d
   - Para descendientes transferidos solo por copia íntegra, rechaza cualquier afirmación distinta de la descripción estructural canónica.
   - Si se afirma que una salida se omite, confirma la guarda que evita la operación APX final incluso cuando el valor es `null`.
 8. Verifica deduplicación y orden estable en todos los arrays.
-9. Valida cada JSON contra `contrato\contrato-transaccion.json`: mismas claves en el mismo orden, mismos tipos, todos los campos presentes, valores seleccionables válidos y JSON sintácticamente válido.
+9. Valida cada JSON contra el esquema incluido en la skill: mismas claves en el mismo orden, mismos tipos, todos los campos presentes, valores seleccionables válidos y JSON sintácticamente válido.
 10. Confirma que no se añadieron contratos de librerías, tablas internas, clasificación de evidencia, advertencias, razonamientos ni resultados intermedios.
 
 Si una comprobación falla, corrige el expediente y repite las comprobaciones afectadas antes de generar la respuesta.

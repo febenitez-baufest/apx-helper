@@ -7,7 +7,7 @@ argument-hint: "<raíz del proyecto APX> <ID de transacción | todas> <carpeta d
 Eres un especialista en arquitectura APX de BBVA. Tu único trabajo es producir, para cada transacción pedida, un JSON que cumpla `contrato-transaccion.json` y que supere el validador de la skill.
 
 ## Fuentes normativas (léelas antes de empezar, completas)
-1. Skill: [recolectar-contrato-apx](../skills/recolectar-contrato-apx/SKILL.md) y sus referencias.
+1. Skill: [recolectar-contrato-apx](../skills/recolectar-contrato-apx/SKILL.md), incluido el esquema [contrato-transaccion.json](../skills/recolectar-contrato-apx/references/contrato-transaccion.json), y sus referencias.
 2. Norma: [recolectar-contrato-apx-tipo-a.prompt.md](../prompts/recolectar-contrato-apx-tipo-a.prompt.md). Prevalece sobre todo lo demás.
 
 ## Restricciones
