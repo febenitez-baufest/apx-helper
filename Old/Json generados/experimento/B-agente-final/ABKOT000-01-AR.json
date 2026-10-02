@@ -1,0 +1,405 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Obtains information about the pricing rule. Allows you to filter by various parameters.",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: execute() reads pricingRuleId, pricingRuleType, pricingRuleStatus, fromDate, toDate, activityId, segmentId, settlementId, onlyActive, pageNumber, sizeOfPage, attributeDesc and attributeName, and if getPricingruleid() is not null and lower than 0 it emits ABKO00000050 with Severity.WARN, sets an empty pricingRules list in dataPricingRuleGet, assigns dataOfPricingRules and returns. 2. Decisions and branches: after the negative identifier check, execute() copies all input fields into PricingRuleGetFilterParams, and ABKOR000Impl.callPricingRulesDataBase() defaults pageNumber to 1 and pageSize to 10 when they are null or non-positive, defaults pricingRuleId, activityId, segmentId and settlementId to -1 when absent, defaults fromDate to 1900-01-01 and toDate to 9990-12-31 when absent, maps onlyActive to active with 1 when null or true and 0 when false, builds FILTERED or ALL flags for status and type depending on whether their lists are populated, and returns an empty pricingRules list when totalElements equals 0 or maps query rows otherwise. 3. Invoked libraries and methods: execute() calls ABKOR000.executeGetPricingRules(filterParams); ABKOR000Impl.executeGetPricingRules() logs the received filters and delegates to callPricingRulesDataBase(), which builds the query parameters, runs GET_COUNT_QUERY and GET_PRICING_RULES_QUERY through jdbcUtils, builds paginationOut with buildPaginationDTO(), maps each row with mapToPricingRuleGetDTO(), maps activities with mapActivities(), maps segment and settlement with mapRelatedEntity(), and maps paymentMethods and customAttributes with Utils.mapPaymentMethodsFromListAgg() and Utils.mapCustomAttributesFromListAgg(). 4. Errors and subsequent actions: in execute(), if getPricingruleid() is not null and lower than 0, addAdvice(ABKO00000050) is triggered with the log text Invalid parameter: pricingRuleId must be non-negative. and Severity.WARN before returning an empty pricingRules list; in execute(), if dataPricingRuleGet.getPricingRules().isEmpty() after ABKOR000.executeGetPricingRules(filterParams), addAdvice(ABKO00000040) is triggered with the log text No Data Founded. and Severity.WARN, and the transaction continues to assign dataOfPricingRules. 5. Outputs and assignment conditions: ABKOR000Impl.callPricingRulesDataBase() always sets paginationOut in DataPricingRuleGet, sets pricingRules to Collections.emptyList() when totalElements equals 0 or to the list mapped from GET_PRICING_RULES_QUERY rows otherwise, and execute() always calls setDataofpricingrules(dataPricingRuleGet), so dataOfPricingRules is assigned even when pricingRules is empty.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT000",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR000",
+        "Method": "executeGetPricingRules",
+        "Description": "Retrieves pricing rules by building database query filters, counting matching records, applying pagination, and mapping each returned row to the response DTO."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO00000050",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "Invalid parameter: pricingRuleId must be non-negative."
+      },
+      {
+        "Error Code": "ABKO00000040",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "No Data Founded."
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier used to restrict the database query to a single pricing rule."
+      },
+      {
+        "Name of APX field": "fromDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Start date used to populate the lower bound of the effective date filter in the database query."
+      },
+      {
+        "Name of APX field": "toDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date used to populate the upper bound of the effective date filter in the database query."
+      },
+      {
+        "Name of APX field": "activityId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Activity identifier used to populate the activityId database filter parameter."
+      },
+      {
+        "Name of APX field": "segmentId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Segment identifier used to populate the segmentId database filter parameter."
+      },
+      {
+        "Name of APX field": "settlementId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Settlement identifier used to populate the settlementId database filter parameter."
+      },
+      {
+        "Name of APX field": "onlyActive",
+        "Mandatory?": "No",
+        "APX data type": "boolean",
+        "Description": "Flag used to populate the active database filter with 1 when null or true and 0 when false."
+      },
+      {
+        "Name of APX field": "pageNumber",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Page number used to calculate the offsetValue database parameter and the current page of paginationOut."
+      },
+      {
+        "Name of APX field": "sizeOfPage",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Page size used to calculate offsetValue and to populate the pageSize database parameter and paginationOut.pageSize."
+      },
+      {
+        "Name of APX field": "pricingRuleType",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of pricing rule type values used to build the typeList filter and the typeFlag query parameter."
+      },
+      {
+        "Name of APX field": "pricingRuleType.Type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule type value used to populate the typeList filter sent to the database query in uppercase."
+      },
+      {
+        "Name of APX field": "pricingRuleStatus",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of pricing rule status values used to build the statusList filter and the statusFlag query parameter."
+      },
+      {
+        "Name of APX field": "pricingRuleStatus.Type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule status value used to populate the statusList filter, expanding enum values or uppercasing direct status codes."
+      },
+      {
+        "Name of APX field": "attributeDesc",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Attribute description used to populate the attributeDesc database filter parameter."
+      },
+      {
+        "Name of APX field": "attributeName",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Attribute name used to populate the attributeName database filter parameter."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "dataOfPricingRules",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Response DTO that groups the pricingRules list and paginationOut built by ABKOR000Impl.callPricingRulesDataBase."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of pricing rules returned by GET_PRICING_RULES_QUERY, or an empty list when the negative identifier validation fails or totalElements equals 0."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.id",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier mapped from column PRICING_RULE_ID in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule name mapped from column PRICING_RULE_NAME in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.active",
+        "Mandatory?": "Yes",
+        "APX data type": "boolean",
+        "Description": "Active flag mapped from whether column ACTIVE_TYPE equals IS_ACTIVE_ROW_INDICATOR in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule status mapped from column PRICING_RULE_STATUS_TYPE in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule type mapped from column PRICING_RULE_TYPE in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.action",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Not populated by ABKOR000Impl.mapToPricingRuleGetDTO; null inside dataOfPricingRules.pricingRules."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.creationDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Creation date mapped from column CREATION_DATE in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Effective date DTO mapped in ABKOR000Impl.mapToPricingRuleGetDTO with startDate from STARTING_DATE and endDate from FINISH_DATE."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Returned as the value mapped from column STARTING_DATE; setStartDate applies UTC conversion."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Returned as the value mapped from column FINISH_DATE; setEndDate applies UTC conversion and defaults to 2099-12-31 UTC when the mapped value is null."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Not populated by ABKOR000Impl.mapToPricingRuleGetDTO; null inside dataOfPricingRules.pricingRules.effectiveDate."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Not populated by ABKOR000Impl.mapToPricingRuleGetDTO; null inside dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Not populated by ABKOR000Impl.mapToPricingRuleGetDTO; null inside dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Not populated by ABKOR000Impl.mapToPricingRuleGetDTO; null inside dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Fee DTO mapped in ABKOR000Impl.mapToPricingRuleGetDTO with feeType from FEE_TYPE and value from TOTAL_FEE_NUMBER."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type mapped from the first two characters of column FEE_TYPE in ABKOR000Impl.mapToPricingRuleGetDTO through Utils.getFeeTypeEnumFromString."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee amount mapped from column TOTAL_FEE_NUMBER in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Settlement DTO mapped from columns SETTLM_ID and SETTLEMENT_NAME in ABKOR000Impl.mapRelatedEntity."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Settlement identifier mapped from column SETTLM_ID in ABKOR000Impl.mapRelatedEntity."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Settlement name mapped from column SETTLEMENT_NAME in ABKOR000Impl.mapRelatedEntity."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Segment DTO mapped from columns SEGM_ID and SEGMENT_NAME in ABKOR000Impl.mapRelatedEntity."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Segment identifier mapped from column SEGM_ID in ABKOR000Impl.mapRelatedEntity."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Segment name mapped from column SEGMENT_NAME in ABKOR000Impl.mapRelatedEntity."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of payment methods mapped from the PAYMENT_METHOD_ID, PAYMENT_METHOD_NAME and PAYMENT_METHOD_CATEGORY_TYPE aggregated columns in Utils.mapPaymentMethodsFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Payment method identifier mapped from column PAYMENT_METHOD_ID in Utils.mapPaymentMethodsFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.attributeName",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Payment method name mapped from column PAYMENT_METHOD_NAME in Utils.mapPaymentMethodsFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.category",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Payment method category mapped from column PAYMENT_METHOD_CATEGORY_TYPE in Utils.mapPaymentMethodsFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of custom attributes mapped from the CUSTOM_ATTRIBUTE_ID, CUSTOM_ATTRIBUTE_NAME and CUSTOM_ATTRIBUTE_VALUE aggregated columns in Utils.mapCustomAttributesFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Custom attribute identifier mapped from column CUSTOM_ATTRIBUTE_ID in Utils.mapCustomAttributesFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.name",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute name mapped from column CUSTOM_ATTRIBUTE_NAME in Utils.mapCustomAttributesFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.value",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute value mapped from column CUSTOM_ATTRIBUTE_VALUE in Utils.mapCustomAttributesFromListAgg."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.packageId",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule package identifier mapped from column PACKAGE_ID in ABKOR000Impl.mapToPricingRuleGetDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of activities mapped from the ACTIVITY_ID and ACTIVITY_NAME aggregated columns in ABKOR000Impl.mapActivities, deduplicating by id when packageId is not null."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Activity identifier mapped from column ACTIVITY_ID in ABKOR000Impl.mapActivities."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Activity name mapped from column ACTIVITY_NAME in ABKOR000Impl.mapActivities."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Pagination DTO built in ABKOR000Impl.buildPaginationDTO from totalElements, pageNumber and pageSize and assigned in ABKOR000Impl.callPricingRulesDataBase."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.firstLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Not populated by ABKOR000Impl.buildPaginationDTO; null inside dataOfPricingRules.paginationOut."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.lastLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Not populated by ABKOR000Impl.buildPaginationDTO; null inside dataOfPricingRules.paginationOut."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.nextLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Not populated by ABKOR000Impl.buildPaginationDTO; null inside dataOfPricingRules.paginationOut."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.previousLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Not populated by ABKOR000Impl.buildPaginationDTO; null inside dataOfPricingRules.paginationOut."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.page",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Current page calculated in ABKOR000Impl.buildPaginationDTO from pageNumber, defaulting to 1 and capped to totalPage."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.totalPage",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Total pages calculated in ABKOR000Impl.buildPaginationDTO as the ceiling of totalElements divided by pageSize."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.totalElements",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Total elements calculated from the GET_COUNT_QUERY result in ABKOR000Impl.buildPaginationDTO."
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.pageSize",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Page size calculated in ABKOR000Impl.buildPaginationDTO from pageSize, defaulting to 10 when the input is null or non-positive."
+      }
+    ]
+  }
+}

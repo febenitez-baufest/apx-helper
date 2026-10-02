@@ -1,0 +1,181 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Approves the creation of a pending approval pricing rule",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: The transaction reads pricingRuleId from the request through getPricingruleid(), returns null when the parameter is missing or cannot be converted to Long, and calls ABKOR005.executeApprovePricingRule(pricingRuleId). Inside the library, getPricingRuleById(pricingRuleId) retrieves the pricing rule, RuleDetailsUtils.populatePricingRuleDetails(...) loads active detail rows and resolves each detail value, and PricingRuleValidator.validateApprove(rule, pricingRuleId) verifies that the rule exists and that its status is PAA, PAU or PAD. 2. Decisions and branches: If rule is not null, processApproval(...) evaluates its status; PAA or PAU without parentId approves the current rule with status APR, PAU with parentId first updates the parent rule to DBU and then approves the current rule with status APR, and PAD updates the current rule to APD. 3. Libraries and methods invoked: The transaction invokes ABKOR005.executeApprovePricingRule, which uses PricingRuleRepository.getPricingRuleById, getDetailsByRuleId, fillDetailValues, getNextId, insertAudit and updatePricingRuleStatus, plus RuleDetailsUtils.populatePricingRuleDetails and PricingRuleValidator.validateApprove, to complete the rule details, obtain the audit id, read the request header user code and persist the approval status change. 4. Errors and actions afterwards: If detail values cannot be resolved, the rule does not exist, the rule status is not approvable or a status update fails, the library catches the PricingRuleException and emits an advice with the same code and description; after the library call, assignSeverityError(getAdviceList()) sets Severity.EWR when the advice list is not empty. 5. Outputs and assignment conditions: The transaction calls setPricingrule(pricingRuleDTO) and assigns pricingRuleResponse only when the library returns a non-null PricingRuleDTO; when the library returns null, the setter skips the output assignment.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT005",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR005",
+        "Method": "executeApprovePricingRule",
+        "Description": "Approves the pricing rule identified by pricingRuleId, completes its details, validates that its status can be approved, records audit data and updates the approval status."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "Error Code": "ABKO10000405",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule with id: %s not found"
+      },
+      {
+        "Error Code": "ABKO10000411",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only PAA, PAU or PAD status rules can be approved"
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Update for approving/disapproving pricing rule with ID {id} status in the database failed"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifies the pricing rule to approve."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRuleResponse",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returns the approved pricing rule when the library response is not null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the approved pricing rule identifier."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returned without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Returned without transformation inside pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Returned without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Returned without transformation inside pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Returns the pricing rule details after resolving each detail value."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returned without transformation inside pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the resolved value for each pricing rule detail."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the pricing rule status after approval processing."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRuleResponse."
+      }
+    ]
+  }
+}

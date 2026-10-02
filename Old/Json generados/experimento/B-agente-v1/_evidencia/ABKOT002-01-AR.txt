@@ -1,0 +1,444 @@
+
+====================================================================================================
+## 1. ABKOT002-01-AR - clase concreta completa
+====================================================================================================
+C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java
+    1| package com.bbva.abko;
+    2| 
+    3| import com.bbva.abko.dto.pricingrulesget.PricingRuleGetDTO;
+    4| import com.bbva.abko.lib.r000.ABKOR000;
+    5| import com.bbva.elara.domain.transaction.Severity;
+    6| import org.slf4j.Logger;
+    7| import org.slf4j.LoggerFactory;
+    8| 
+    9| /**
+   10|  * transaction to obtain a price rule by your id
+   11|  *
+   12|  */
+   13| public class ABKOT00201ARTransaction extends AbstractABKOT00201ARTransaction {
+   14| 
+   15| 	private static final Logger LOGGER = LoggerFactory.getLogger(ABKOT00201ARTransaction.class);
+   16|     private static final String NO_DATA_FOUNDED = "ABKO00000040";
+   17|     private static final String NEGATIVE_ID_CODE = "ABKO00000050";
+   18| 
+   19| 	/**
+   20| 	 * The execute method...
+   21| 	 */
+   22| 	@Override
+   23| 	public void execute() {
+   24| 		ABKOR000 abkoR000 = this.getServiceLibrary(ABKOR000.class);
+   25| 		LOGGER.info("Executing ABKOT00201ARTransaction.execute() method");
+   26|         Long pricingRuleId = this.getPricingruleid();
+   27| 
+   28|         LOGGER.info("Calling ABKOR000 library with pricingRuleId: {}", pricingRuleId);
+   29| 
+   30|         if(pricingRuleId !=null && pricingRuleId < 0){
+   31|             LOGGER.error("Invalid parameter: pricingRuleId must be non-negative.");
+   32|             this.addAdvice(NEGATIVE_ID_CODE);
+   33|             this.setSeverity(Severity.WARN);
+   34|         }
+   35| 
+   36|         PricingRuleGetDTO priceRule = abkoR000.executeGetPricingRuleById(pricingRuleId);
+   37| 
+   38|         if (priceRule == null) {
+   39|             LOGGER.error("No Data Founded.");
+   40|             this.addAdvice(NO_DATA_FOUNDED);
+   41|             this.setSeverity(Severity.WARN);
+   42|         }
+   43| 
+   44|         LOGGER.info("ABKOT00201AR Data to Return {}", priceRule);
+   45|         this.setPricingrule(priceRule);
+   46| 	}
+   47| 
+   48| }
+
+====================================================================================================
+## 1b. Clase abstracta - métodos con addParameter (salidas): ¿hay guarda antes de addParameter?
+====================================================================================================
+
+C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00201ARTransaction.java:20
+   20| 	}
+   21| 
+   22| 	/**
+   23| 	 * Set value for PricingRuleGetDTO output parameter pricingRule
+   24| 	 */
+   25| 	protected void setPricingrule(final PricingRuleGetDTO field){
+   26| 		this.addParameter("pricingRule", field);
+   27| 	}
+
+====================================================================================================
+## 2. Librerías invocadas (getServiceLibrary + llamada)
+====================================================================================================
+
+ABKOR000.executeGetPricingRuleById  interfaz=C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000\src\main\java\com\bbva\abko\lib\r000\ABKOR000.java  impl=C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java
+  Firma (ABKOR000.java:16): PricingRuleGetDTO executeGetPricingRuleById(Long pricingRuleId);
+  Javadoc: (sin Javadoc)
+
+====================================================================================================
+## 3. Grafo de llamadas estático desde execute() (→ método, ⚑ emisión, ◆ severidad)
+====================================================================================================
+→ ABKOT00201ARTransaction.execute()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:22]
+  → AbstractABKOT00201ARTransaction.getPricingruleid()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00201ARTransaction.java:12]
+  ⚑ EMITE advice código=ABKO00000050  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:32]  addAdvice(NEGATIVE_ID_CODE)
+    descripción esperada: '[log adyacente candidato] Invalid parameter: pricingRuleId must be non-negative.'
+  ◆ SEVERITY WARN  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:33]
+  → ABKOR000Impl.executeGetPricingRuleById()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:57]
+    → ABKOR000Impl.callPricingRuleByIdDataBase()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:96]
+      → ABKOR000Impl.getBaseParams()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:272]
+      → ABKOR000Impl.mapToPricingRuleGetDTO()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:208]
+        → Utils.getNullableLong()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:114]
+        → Utils.getNullableString()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:130]
+        ↺ Utils.getNullableString() (ya recorrido arriba)
+        ↺ Utils.getNullableString() (ya recorrido arriba)
+        ↺ Utils.getNullableString() (ya recorrido arriba)
+        → Utils.getNullableDate()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:135]
+        ↺ Utils.getNullableDate() (ya recorrido arriba)
+        ↺ Utils.getNullableDate() (ya recorrido arriba)
+        ↺ Utils.getNullableString() (ya recorrido arriba)
+        → Utils.getFeeTypeEnumFromString()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:101]
+        → Utils.getNullableDouble()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:122]
+        → ABKOR000Impl.mapActivities()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:248]
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+        → ABKOR000Impl.mapRelatedEntity()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:301]
+          ↺ Utils.getNullableLong() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+        ↺ ABKOR000Impl.mapRelatedEntity() (ya recorrido arriba)
+        → Utils.mapPaymentMethodsFromListAgg()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:27]
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableLong() (ya recorrido arriba)
+        → Utils.mapCustomAttributesFromListAgg()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:65]
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableString() (ya recorrido arriba)
+          ↺ Utils.getNullableLong() (ya recorrido arriba)
+      ↺ Utils.getNullableString() (ya recorrido arriba)
+      ↺ Utils.getNullableString() (ya recorrido arriba)
+      ↺ Utils.getNullableLong() (ya recorrido arriba)
+      ↺ Utils.getNullableLong() (ya recorrido arriba)
+      ↺ Utils.getNullableString() (ya recorrido arriba)
+  ⚑ EMITE advice código=ABKO00000040  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:40]  addAdvice(NO_DATA_FOUNDED)
+    descripción esperada: '[log adyacente candidato] No Data Founded.'
+  ◆ SEVERITY WARN  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:41]
+  → AbstractABKOT00201ARTransaction.setPricingrule()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00201ARTransaction.java:20]
+
+====================================================================================================
+## 4. Cuerpo de cada método alcanzado (excepto la clase concreta, ya impresa)
+====================================================================================================
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00201ARTransaction.java:12 getPricingruleid()
+   12| 	}
+   13| 
+   14| 
+   15| 	/**
+   16| 	 * Return value for input parameter pricingRuleId
+   17| 	 */
+   18| 	protected Long getPricingruleid(){
+   19| 		return (Long)this.getParameter("pricingRuleId");
+   20| 	}
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:57 executeGetPricingRuleById()
+   57|     @Override
+   58|     public PricingRuleGetDTO executeGetPricingRuleById(Long pricingRuleId) {
+   59|         LOGGER.info("Executing ABKOR000.executeGetPricingRuleById() method with param: {}", pricingRuleId);
+   60|         return callPricingRuleByIdDataBase(pricingRuleId);
+   61|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:96 callPricingRuleByIdDataBase()
+   96|     }
+   97| 
+   98|     private PricingRuleGetDTO callPricingRuleByIdDataBase(Long pricingRuleId) {
+   99|         Map<String, Object> params = getBaseParams();
+  100|         params.put("pricingRuleId", pricingRuleId);
+  101| 
+  102|         List<Map<String, Object>> result = this.jdbcUtils.queryForList(GET_PRICING_RULE_BY_ID_QUERY, params);
+  103|         if (result.isEmpty()) return null;
+  104| 
+  105|         Map<String, Object> row = result.get(0);
+  106|         PricingRuleGetDTO dto = mapToPricingRuleGetDTO(row);
+  107| 
+  108|         // Campos adicionales exclusivos del "ById"
+  109|         dto.setProggresiveType(Utils.getNullableString(row, "PROGRESSIVE_TYPE"));
+  110|         dto.setPrecedence(Utils.getNullableString(row, "PRECEDENCE_TYPE"));
+  111|         dto.setParentPricingRuleId(Utils.getNullableLong(row, "PARENT_PRICING_RULE_ID"));
+  112|         dto.setVersion(Utils.getNullableLong(row, "ENTITY_VERSION_ID"));
+  113|         dto.setComment(Utils.getNullableString(row, "COMMENTS_DESC"));
+  114| 
+  115|         return dto;
+  116|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:272 getBaseParams()
+  272|     }
+  273| 
+  274|     private Map<String, Object> getBaseParams() {
+  275|         Map<String, Object> params = new HashMap<>();
+  276|         params.put("entityActiviy", EntityTypeEnum.ACT.getDbValue());
+  277|         params.put("entitySegment", EntityTypeEnum.SEG.getDbValue());
+  278|         params.put("entitySettlement", EntityTypeEnum.SET.getDbValue());
+  279|         params.put("entityPaymentMethod", EntityTypeEnum.PMT.getDbValue());
+  280|         params.put("entityPricingRule", EntityTypeEnum.PRL.getDbValue());
+  281|         params.put("entityCUS", EntityTypeEnum.CUS.getDbValue());
+  282|         return params;
+  283|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:208 mapToPricingRuleGetDTO()
+  208|     }
+  209| 
+  210|     // Metodo centralizado para evitar repetir el mapeo de los DTOs comunes
+  211|     private PricingRuleGetDTO mapToPricingRuleGetDTO(Map<String, Object> row) {
+  212|         PricingRuleGetDTO pricingRule = new PricingRuleGetDTO();
+  213| 
+  214|         pricingRule.setId(Utils.getNullableLong(row, "PRICING_RULE_ID"));
+  215|         pricingRule.setPackageId(Utils.getNullableString(row, "PACKAGE_ID"));
+  216|         pricingRule.setName(Utils.getNullableString(row, "PRICING_RULE_NAME"));
+  217|         pricingRule.setActive(IS_ACTIVE_ROW_INDICATOR.equals(row.get("ACTIVE_TYPE")));
+  218|         pricingRule.setStatus(Utils.getNullableString(row, "PRICING_RULE_STATUS_TYPE"));
+  219|         pricingRule.setType(Utils.getNullableString(row, "PRICING_RULE_TYPE"));
+  220|         pricingRule.setCreationDate(Utils.getNullableDate(row, "CREATION_DATE"));
+  221| 
+  222|         EffectiveDateDTO effectiveDate = new EffectiveDateDTO();
+  223|         effectiveDate.setStartDate(Utils.getNullableDate(row, "STARTING_DATE"));
+  224|         effectiveDate.setEndDate(Utils.getNullableDate(row, "FINISH_DATE"));
+  225|         pricingRule.setEffectiveDate(effectiveDate);
+  226| 
+  227|         FeeDTO feeDTO = new FeeDTO();
+  228|         String feeTypeValue = Utils.getNullableString(row, "FEE_TYPE");
+  229|         // Mantiene la lógica original de extracción de substring si aplica
+  230|         feeDTO.setFeeType(Utils.getFeeTypeEnumFromString(feeTypeValue != null && feeTypeValue.length() > 2 ? feeTypeValue.substring(0,2) : feeTypeValue));
+  231|         feeDTO.setValue(Utils.getNullableDouble(row, "TOTAL_FEE_NUMBER"));
+  232|         pricingRule.setFee(feeDTO);
+  233| 
+  234|         // Mapeo de entidades relacionadas (Activity, Segment, Settlement)
+  235|         List<ActivityDTO> activities = mapActivities(row, pricingRule.getPackageId() != null);
+  236|         pricingRule.setActivities(activities.isEmpty() ? null : activities);
+  237|         pricingRule.setActivity(activities.isEmpty() ? null : activities.get(0));
+  238|         pricingRule.setSegment(mapRelatedEntity(row, "SEGM_ID", "SEGMENT_NAME", new SegmentDTO()));
+  239|         pricingRule.setSettlement(mapRelatedEntity(row, "SETTLM_ID", "SETTLEMENT_NAME", new SettlementDTO()));
+  240| 
+  241|         List<PaymentMethodDTO> pMethods = Utils.mapPaymentMethodsFromListAgg(row);
+  242|         pricingRule.setPaymentMethods(pMethods.isEmpty() ? null : pMethods);
+  243| 
+  244|         List<CustomAttributes> customAttributes = Utils.mapCustomAttributesFromListAgg(row);
+  245|         pricingRule.setCustomAttributes(customAttributes.isEmpty() ? null : customAttributes);
+  246| 
+  247|         return pricingRule;
+  248|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:114 getNullableLong()
+  114|     }
+  115| 
+  116|     public static Long getNullableLong(Map<String, Object> map, String key) {
+  117|         Object value = map.get(key);
+  118|         if (value == null) {
+  119|             return null;
+  120|         }
+  121|         return Long.parseLong(value.toString());
+  122|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:130 getNullableString()
+  130|     }
+  131| 
+  132|     public static String getNullableString(Map<String, Object> map, String key) {
+  133|         Object value = map.get(key);
+  134|         return value != null ? String.valueOf(value) : null;
+  135|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:135 getNullableDate()
+  135|     }
+  136| 
+  137|     public static Date getNullableDate(Map<String, Object> map, String key) {
+  138| 
+  139|         Object dateFromDb = map.get(key);
+  140| 
+  141|         if (dateFromDb == null) {
+  142|             return null;
+  143|         }
+  144| 
+  145|         Timestamp dbToDate = (Timestamp) dateFromDb;
+  146| 
+  147|         LocalDateTime localDateTime = dbToDate.toLocalDateTime();
+  148| 
+  149|         LocalDate localDate = localDateTime.toLocalDate();
+  150|         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+  151|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:101 getFeeTypeEnumFromString()
+  101|     }
+  102| 
+  103|     public static FeeTypeEnum getFeeTypeEnumFromString(String feeTypeValue) {
+  104| 
+  105|         if (feeTypeValue != null) {
+  106|             FeeTypeEnum feeType = FeeTypeEnum.getFeeTypeEnumFromString(feeTypeValue.substring(0, 2));
+  107|             if (feeType == FeeTypeEnum.PERCENTAGE) {
+  108|                 return FeeTypeEnum.PERCENTAGE;
+  109|             } else {
+  110|                 return FeeTypeEnum.FIXED;
+  111|             }
+  112|         }
+  113|         return null;
+  114|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:122 getNullableDouble()
+  122|     }
+  123| 
+  124|     public static Double getNullableDouble(Map<String, Object> map, String key) {
+  125|         Object value = map.get(key);
+  126|         if (value == null) {
+  127|             return null;
+  128|         }
+  129|         return Double.parseDouble(String.valueOf(value));
+  130|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:248 mapActivities()
+  248|     }
+  249| 
+  250|     private List<ActivityDTO> mapActivities(Map<String, Object> row, boolean consolidateDuplicates) {
+  251|         String activityIds = Utils.getNullableString(row, "ACTIVITY_ID");
+  252|         String activityNames = Utils.getNullableString(row, "ACTIVITY_NAME");
+  253|         if (activityIds == null || activityIds.trim().isEmpty()) {
+  254|             return Collections.emptyList();
+  255|         }
+  256| 
+  257|         String[] ids = activityIds.split(",\\s*");
+  258|         String[] names = activityNames == null ? new String[0] : activityNames.split(",\\s*");
+  259|         Map<Long, ActivityDTO> activitiesById = consolidateDuplicates ? new LinkedHashMap<>() : null;
+  260|         List<ActivityDTO> activities = consolidateDuplicates ? null : new ArrayList<>();
+  261|         for (int index = 0; index < ids.length; index++) {
+  262|             ActivityDTO activity = new ActivityDTO();
+  263|             activity.setId(Long.parseLong(ids[index]));
+  264|             activity.setName(index < names.length ? names[index] : null);
+  265|             if (consolidateDuplicates) {
+  266|                 activitiesById.putIfAbsent(activity.getId(), activity);
+  267|             } else {
+  268|                 activities.add(activity);
+  269|             }
+  270|         }
+  271|         return consolidateDuplicates ? new ArrayList<>(activitiesById.values()) : activities;
+  272|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\ABKOR000Impl.java:301 mapRelatedEntity()
+  301|     }
+  302| 
+  303|     // Metodo genérico para mapear Activity, Segment o Settlement si el ID no es nulo
+  304|     private <T> T mapRelatedEntity(Map<String, Object> row, String idCol, String nameCol, Object dto) {
+  305|         Long id = Utils.getNullableLong(row, idCol);
+  306|         if (id == null) return null;
+  307|         if (dto instanceof ActivityDTO) { ((ActivityDTO) dto).setId(id); ((ActivityDTO) dto).setName(Utils.getNullableString(row, nameCol)); }
+  308|         else if (dto instanceof SegmentDTO) { ((SegmentDTO) dto).setId(id); ((SegmentDTO) dto).setName(Utils.getNullableString(row, nameCol)); }
+  309|         else if (dto instanceof SettlementDTO) { ((SettlementDTO) dto).setId(id); ((SettlementDTO) dto).setName(Utils.getNullableString(row, nameCol)); }
+  310|         return (T) dto;
+  311|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:27 mapPaymentMethodsFromListAgg()
+   27|     private static final String REGEX_SPLIT_COMMA = ",\\s*";
+   28| 
+   29|     public static List<PaymentMethodDTO> mapPaymentMethodsFromListAgg(Map<String, Object> row) {
+   30| 
+   31|         String idsStr = getNullableString(row, "PAYMENT_METHOD_ID");
+   32|         String paymentMethodNameStr = getNullableString(row, "PAYMENT_METHOD_NAME");
+   33|         String categoryPaymentMethodStr = getNullableString(row, "PAYMENT_METHOD_CATEGORY_TYPE");
+   34|         Long idPricingRule = getNullableLong(row, "PRICING_RULE_ID");
+   35| 
+   36|         if (idsStr == null || idsStr.trim().isEmpty()) {
+   37|             return Collections.emptyList();
+   38|         }
+   39| 
+   40|         String safePaymentMethodNameStr = (paymentMethodNameStr != null) ? paymentMethodNameStr : "";
+   41|         String safeCategoryPaymentMethodStr = (categoryPaymentMethodStr != null) ? categoryPaymentMethodStr : "";
+   42| 
+   43|         // Inicializa la lista SÓLO si hay IDs para procesar
+   44|         List<PaymentMethodDTO> methods = new ArrayList<>();
+   45| 
+   46|         List<String> idList = Arrays.asList(idsStr.split(REGEX_SPLIT_COMMA));
+   47|         List<String> nameList = Arrays.asList(safePaymentMethodNameStr.split(REGEX_SPLIT_COMMA));
+   48|         List<String> typeList = Arrays.asList(safeCategoryPaymentMethodStr.split(REGEX_SPLIT_COMMA));
+   49| 
+   50|         // 4. Validación de longitud
+   51|         if (idList.size() != nameList.size() || idList.size() != typeList.size()) {
+   52|             LOGGER.warn("LISTAGG mismatch: Las listas de métodos de pago tienen longitudes diferentes para la regla con ID: {}", idPricingRule);
+   53|             return Collections.emptyList();
+   54|         }
+   55| 
+   56|         for (int i = 0; i < idList.size(); i++) {
+   57|             PaymentMethodDTO paymentMethodDTO = new PaymentMethodDTO();
+   58|             paymentMethodDTO.setId(Long.parseLong(idList.get(i)));
+   59|             paymentMethodDTO.setAttributeName(nameList.get(i));
+   60|             paymentMethodDTO.setCategory(typeList.get(i));
+   61|             methods.add(paymentMethodDTO);
+   62|         }
+   63| 
+   64|         return methods;
+   65|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\java\com\bbva\abko\lib\r000\impl\utils\Utils.java:65 mapCustomAttributesFromListAgg()
+   65|     }
+   66| 
+   67|     public static List<CustomAttributes> mapCustomAttributesFromListAgg(Map<String, Object> row) {
+   68| 
+   69|         String idsStr = getNullableString(row, "CUSTOM_ATTRIBUTE_ID");
+   70|         String attributeNameStr = getNullableString(row, "CUSTOM_ATTRIBUTE_NAME");
+   71|         String attributeValueStr = getNullableString(row, "CUSTOM_ATTRIBUTE_VALUE");
+   72|         Long idPricingRule = getNullableLong(row, "PRICING_RULE_ID");
+   73| 
+   74|         if (idsStr == null || idsStr.trim().isEmpty()) {
+   75|             return Collections.emptyList();
+   76|         }
+   77| 
+   78|         String safeAttributeNameStr = (attributeNameStr != null) ? attributeNameStr : "";
+   79|         String safeAttributeValueStr = (attributeValueStr != null) ? attributeValueStr : "";
+   80| 
+   81|         List<CustomAttributes> customAttributes = new ArrayList<>();
+   82| 
+   83|         List<String> idList = Arrays.asList(idsStr.split(REGEX_SPLIT_COMMA));
+   84|         List<String> nameList = Arrays.asList(safeAttributeNameStr.split(REGEX_SPLIT_COMMA));
+   85|         List<String> valueList = Arrays.asList(safeAttributeValueStr.split(REGEX_SPLIT_COMMA));
+   86| 
+   87|         if (idList.size() != nameList.size() || idList.size() != valueList.size()) {
+   88|             LOGGER.warn("LISTAGG mismatch: Las listas de atributos custom tienen longitudes diferentes para la regla con ID: {}", idPricingRule);
+   89|             return Collections.emptyList();
+   90|         }
+   91| 
+   92|         for (int i = 0; i < idList.size(); i++) {
+   93|             CustomAttributes customAttribute = new CustomAttributes();
+   94|             customAttribute.setId(Long.parseLong(idList.get(i)));
+   95|             customAttribute.setName(nameList.get(i));
+   96|             customAttribute.setValue(valueList.get(i));
+   97|             customAttributes.add(customAttribute);
+   98|         }
+   99| 
+  100|         return customAttributes;
+  101|     }
+
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\AbstractABKOT00201ARTransaction.java:20 setPricingrule()
+   20| 	}
+   21| 
+   22| 	/**
+   23| 	 * Set value for PricingRuleGetDTO output parameter pricingRule
+   24| 	 */
+   25| 	protected void setPricingrule(final PricingRuleGetDTO field){
+   26| 		this.addParameter("pricingRule", field);
+   27| 	}
+
+====================================================================================================
+## 5. Secuencia DFS de primera emisión (orden requerido para Error Management)
+====================================================================================================
+1. ABKO00000050  primera emisión advice en execute()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:32]
+     descripción candidata: '[log adyacente candidato] Invalid parameter: pricingRuleId must be non-negative.'
+2. ABKO00000040  primera emisión advice en execute()  [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:40]
+     descripción candidata: '[log adyacente candidato] No Data Founded.'
+Severidades: WARN en execute() [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:33], WARN en execute() [C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\java\com\bbva\abko\ABKOT00201ARTransaction.java:41]
+
+====================================================================================================
+## 6. multilanguage-ES.properties y marcadores explícitos
+====================================================================================================
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\libraries\ABKOR000IMPL\src\main\resources\multilanguage-ES.properties
+(vacío)
+--- C:\Users\ggiacomino\Desktop\apx-helper\ud-pricing-rules\artifact\transactions\ABKOT002-01-AR\src\main\resources\multilanguage-ES.properties
+(vacío)
+transactional: 0 coincidencias
+async: 0 coincidencias
+Sin evidencia explícita: Asynchronous? y Transactional? = marcador; Asynchronous Consumers y Events = []

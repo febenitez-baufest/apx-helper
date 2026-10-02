@@ -1,0 +1,324 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Modifies a pricing rule that is being used for payments on EVA platform",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "The transaction obtains the pricing rule identifier, the pricing rule request and the user code from the request header. It invokes ABKOR001.executePutPricingRules(pricingRuleId, pricingRuleRequest, auditUserId), which retrieves the existing pricing rule, validates that it can be modified, checks duplicate configurations, resolves detail values and updates the pricing rule and its details. The resulting PricingRuleDTO is assigned to pricingRuleResponse. If the transaction advice list is not empty after the library invocation, the transaction sets severity EWR.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT004",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR001",
+        "Method": "executePutPricingRules(Long pricingRuleId, PricingRuleDTO pricingRule, String auditUserId)",
+        "Description": "Modifies an existing pricing rule, validating its current state and update restrictions, checking duplicate configurations, resolving detail values and persisting the changes."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10000405",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule with id: %s not found"
+      },
+      {
+        "Error Code": "ABKO10000407",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "The pricing rule with id %s is inactive and cannot be modified"
+      },
+      {
+        "Error Code": "ABKO10000408",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only rules in state PAA, PAU, REJ, SYE or SYC can be modified."
+      },
+      {
+        "Error Code": "ABKO10000417",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "The pricing rule with id %s is in SYC state and has child rules, so it cannot be modified directly"
+      },
+      {
+        "Error Code": "ABKO10000413",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Start date can not be before than current date"
+      },
+      {
+        "Error Code": "ABKO10000414",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only settlement detail, fee value and effective date start date can be modified for synchronized rules"
+      },
+      {
+        "Error Code": "ABKO10000416",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing rule type %s cannot be modified. Only V, R or P are allowed"
+      },
+      {
+        "Error Code": "ABKO10010401",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010415",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "NO HAY INFORMACIÓN SUFICIENTE"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifier of the pricing rule to modify"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Pricing rule data to be used for the modification"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule name"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Pricing rule fee configuration"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee value"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Pricing rule effective date configuration"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Start date of the pricing rule"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date of the pricing rule"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Pricing rule recurrence time entries"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Recurrence day"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Recurrence start hour"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Recurrence end hour"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Pricing rule detail entries"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifier of the entity associated with the pricing rule detail"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Entity type of the pricing rule detail"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule precedence type"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule progressive type"
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule comments"
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRuleResponse",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Modified pricing rule response"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifier of the modified pricing rule"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Modified pricing rule name"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Modified pricing rule fee configuration"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Modified fee type"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Modified fee value"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Modified pricing rule effective date configuration"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Start date of the modified pricing rule"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date of the modified pricing rule"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Recurrence time entries of the modified pricing rule"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Recurrence day"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Recurrence start hour"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Recurrence end hour"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Modified pricing rule detail entries"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifier of the entity associated with the pricing rule detail"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Entity type of the pricing rule detail"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Resolved value of the pricing rule detail"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule precedence type"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule progressive type"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Status of the modified pricing rule"
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule comments"
+      }
+    ]
+  }
+}

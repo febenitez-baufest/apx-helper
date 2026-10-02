@@ -1,0 +1,285 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "transaction transaction to obtain a price rule by your id",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: the transaction reads pricingRuleId from the input and, when pricingRuleId is not null and is lower than 0, it adds advice ABKO00000050 with warning severity. 2. Decisions and branches: after the validation branch, the flow continues in all cases and does not stop before invoking the library. 3. Libraries and invoked methods: the transaction obtains ABKOR000 through getServiceLibrary(ABKOR000.class) and invokes executeGetPricingRuleById(pricingRuleId); the library builds base query parameters, queries the database with pricingRuleId, returns null when the query result is empty, and otherwise maps the first row into pricingRule.id, pricingRule.name, pricingRule.active, pricingRule.status, pricingRule.type, pricingRule.creationDate, pricingRule.effectiveDate.startDate, pricingRule.effectiveDate.endDate, pricingRule.fee.feeType, pricingRule.fee.value, pricingRule.activity, pricingRule.segment, pricingRule.settlement, pricingRule.paymentMethods, pricingRule.customAttributes, pricingRule.proggresiveType, pricingRule.precedence, pricingRule.parentPricingRuleId, pricingRule.version and pricingRule.comment. 4. Errors and follow-up actions: when the library returns null, the transaction adds advice ABKO00000040 with warning severity. 5. Outputs and assignment conditions: the transaction always assigns the output pricingRule with the PricingRuleGetDTO returned by the library through setPricingrule(priceRule), even when that returned value is null.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT002",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR000",
+        "Method": "executeGetPricingRuleById",
+        "Description": "Retrieves the pricing rule identified by pricingRuleId from the database and maps the first returned row into PricingRuleGetDTO."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO00000050",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "Invalid parameter: pricingRuleId must be non-negative."
+      },
+      {
+        "Error Code": "ABKO00000040",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "No Data Founded."
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifier used to retrieve the pricing rule by id."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRule",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Pricing rule DTO returned by ABKOR000.executeGetPricingRuleById."
+      },
+      {
+        "Name of APX field": "pricingRule.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier mapped from PRICING_RULE_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule name mapped from PRICING_RULE_NAME."
+      },
+      {
+        "Name of APX field": "pricingRule.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule status mapped from PRICING_RULE_STATUS_TYPE."
+      },
+      {
+        "Name of APX field": "pricingRule.type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule type mapped from PRICING_RULE_TYPE."
+      },
+      {
+        "Name of APX field": "pricingRule.active",
+        "Mandatory?": "Yes",
+        "APX data type": "boolean",
+        "Description": "Active flag derived from ACTIVE_TYPE equals 1."
+      },
+      {
+        "Name of APX field": "pricingRule.action",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRule.creationDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Creation date mapped from CREATION_DATE."
+      },
+      {
+        "Name of APX field": "pricingRule.proggresiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Progressive type mapped from PROGRESSIVE_TYPE."
+      },
+      {
+        "Name of APX field": "pricingRule.precedence",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Precedence type mapped from PRECEDENCE_TYPE."
+      },
+      {
+        "Name of APX field": "pricingRule.parentPricingRuleId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Parent pricing rule identifier mapped from PARENT_PRICING_RULE_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.version",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Entity version mapped from ENTITY_VERSION_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.comment",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Comment mapped from COMMENTS_DESC."
+      },
+      {
+        "Name of APX field": "pricingRule.fee",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Fee information mapped for the returned pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRule.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type derived from the FEE_TYPE column."
+      },
+      {
+        "Name of APX field": "pricingRule.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee value mapped from TOTAL_FEE_NUMBER."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Effective date information mapped for the returned pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Effective start date mapped from STARTING_DATE."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Effective end date mapped from FINISH_DATE."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRule.activity",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "First activity mapped from the aggregated activity identifiers and names."
+      },
+      {
+        "Name of APX field": "pricingRule.activity.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Activity identifier taken from the first value in ACTIVITY_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.activity.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Activity name taken from the first value in ACTIVITY_NAME."
+      },
+      {
+        "Name of APX field": "pricingRule.settlement",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Settlement information mapped for the returned pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRule.settlement.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Settlement identifier mapped from SETTLM_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.settlement.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Settlement name mapped from SETTLEMENT_NAME."
+      },
+      {
+        "Name of APX field": "pricingRule.segment",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Segment information mapped for the returned pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRule.segment.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Segment identifier mapped from SEGM_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.segment.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Segment name mapped from SEGMENT_NAME."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Payment methods mapped from the aggregated payment method columns."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Payment method identifier mapped from PAYMENT_METHOD_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods.attributeName",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Payment method attribute name mapped from PAYMENT_METHOD_NAME."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods.category",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Payment method category mapped from PAYMENT_METHOD_CATEGORY_TYPE."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Custom attributes mapped from the aggregated custom attribute columns."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Custom attribute identifier mapped from CUSTOM_ATTRIBUTE_ID."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes.name",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute name mapped from CUSTOM_ATTRIBUTE_NAME."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes.value",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Custom attribute value mapped from CUSTOM_ATTRIBUTE_VALUE."
+      }
+    ]
+  }
+}

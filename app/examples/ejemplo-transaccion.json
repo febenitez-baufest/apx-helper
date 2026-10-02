@@ -1,0 +1,68 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Recupera y consolida los eventos biométricos de un cliente para su evaluación de riesgo.",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Valida los parámetros de entrada. 2. Invoca ADVSR500.executeGetBiometricEvents. 3. Enriquece la respuesta con el catálogo de dispositivos. 4. Devuelve la lista consolidada.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "No",
+    "Transactional?": "Yes",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ADVST501-01-AR",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ADVSR500",
+        "Method": "executeGetBiometricEvents",
+        "Description": "Obtiene los eventos biométricos almacenados del cliente."
+      },
+      {
+        "Library Identifier": "ADVSR510",
+        "Method": "executeGetDeviceCatalog",
+        "Description": "Recupera el catálogo de dispositivos soportados."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ADVS00060001",
+        "Severity": "06 - ERROR NO ROLLBACK",
+        "Description of the error situation": "No se encontraron eventos biométricos para el cliente indicado."
+      },
+      {
+        "Error Code": "ADVS00080002",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Error al persistir la consolidación de eventos."
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "customerId",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Identificador único del cliente."
+      },
+      {
+        "Name of APX field": "fromDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Fecha inicial del rango de consulta."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "events",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Lista de eventos biométricos consolidados."
+      },
+      {
+        "Name of APX field": "totalEvents",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Número total de eventos devueltos."
+      }
+    ]
+  }
+}

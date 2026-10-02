@@ -1,0 +1,435 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Obtains information about the pricing rule. Allows you to filter by various parameters.",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Entrada y validaciones: Obtiene pricingRuleId y el resto de parámetros de entrada mediante los getters de la transacción. Si pricingRuleId no es null y es menor que cero, registra el error, añade el advice ABKO00000050 con severidad WARN, devuelve pricingRules vacío y finaliza. 2. Decisiones y ramas: Si pricingRuleId es null o no negativo, construye PricingRuleGetFilterParams y asigna los filtros recibidos, incluidos pricingRuleType, pricingRuleStatus, fechas, identificadores, paginación, onlyActive, attributeDesc y attributeName. 3. Librerías: Invoca ABKOR000.executeGetPricingRules(filterParams), que construye los parámetros de consulta, aplica valores predeterminados para paginación, fechas, identificadores y active, procesa los filtros de estado y tipo, consulta los datos y el total, construye la paginación y mapea los resultados a DataPricingRuleGet. 4. Errores: Si pricingRuleId es negativo, añade ABKO00000050 con severidad WARN. Si la respuesta de ABKOR000.executeGetPricingRules contiene una lista pricingRules vacía, añade ABKO00000040 con severidad WARN. 5. Salidas: Asigna la respuesta DataPricingRuleGet a dataOfPricingRules; cuando no existen resultados, conserva la paginación y una lista pricingRules vacía.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT000",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR000",
+        "Method": "executeGetPricingRules",
+        "Description": "Obtains pricing rules using the supplied filter parameters."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO00000040",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Error Code": "ABKO00000050",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "NO HAY INFORMACIÓN SUFICIENTE"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Return value for input parameter pricingRuleId"
+      },
+      {
+        "Name of APX field": "fromDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Return value for input parameter fromDate"
+      },
+      {
+        "Name of APX field": "toDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Return value for input parameter toDate"
+      },
+      {
+        "Name of APX field": "activityId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Return value for input parameter activityId"
+      },
+      {
+        "Name of APX field": "segmentId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Return value for input parameter segmentId"
+      },
+      {
+        "Name of APX field": "settlementId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Return value for input parameter settlementId"
+      },
+      {
+        "Name of APX field": "onlyActive",
+        "Mandatory?": "No",
+        "APX data type": "boolean",
+        "Description": "Return value for input parameter onlyActive"
+      },
+      {
+        "Name of APX field": "pageNumber",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Return value for input parameter pageNumber"
+      },
+      {
+        "Name of APX field": "sizeOfPage",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Return value for input parameter sizeOfPage"
+      },
+      {
+        "Name of APX field": "pricingRuleType",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Return value for input parameter pricingRuleType"
+      },
+      {
+        "Name of APX field": "pricingRuleType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "pricingRuleStatus",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Return value for input parameter pricingRuleStatus"
+      },
+      {
+        "Name of APX field": "pricingRuleStatus",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "attributeDesc",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Return value for input parameter attributeDesc"
+      },
+      {
+        "Name of APX field": "attributeName",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Return value for input parameter attributeName"
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "dataOfPricingRules",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Set value for DataPricingRuleGet output parameter dataOfPricingRules"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.id",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.active",
+        "Mandatory?": "Yes",
+        "APX data type": "boolean",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.action",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.creationDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.settlement.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.segment.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.attributeName",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.paymentMethods.category",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.name",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.customAttributes.value",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.packageId",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.pricingRules.activities.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.firstLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.lastLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.nextLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.previousLink",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.page",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.totalPage",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.totalElements",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      },
+      {
+        "Name of APX field": "dataOfPricingRules.paginationOut.pageSize",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "NO HAY INFORMACIÓN SUFICIENTE"
+      }
+    ]
+  }
+}

@@ -1,0 +1,324 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Modifies a pricing rule that is being used for payments on EVA platform",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Entrada y validaciones: obtiene pricingRuleId, pricingRuleRequest y el usuario de cabecera, e invoca ABKOR001.executePutPricingRules(pricingRuleId, pricingRuleRequest, auditUserId). En la libreria busca la pricing rule existente por id, carga sus details activos, los mapea al DTO existente, copia pricingRuleType a pricingRuleRequest y, si la regla esta en estado SYC, calcula si tiene hijos activos. Valida que la regla exista y este activa, que su estado permita modificacion, que una regla SYC sin hijos solo modifique campos permitidos y que pricingRuleRequest.effectiveDate.startDate sea futura. 2. Decisiones y ramas: si no existe una regla con ese id anade el advice ABKO10000405 y termina. Despues fija pricingRuleRequest.id, valida el tipo de pricing rule y detecta duplicados o solapamientos funcionales segun pricingRuleType y details. Si comments, precedenceType o progressiveType llegan nulos y existen en la regla actual, los copia desde la regla existente. Si el estado actual es SYC crea una nueva version con nuevo id, parentId igual al id original, version incrementada y status PAU; en caso contrario sincroniza altas y bajas de details, fija status PAU y actualiza la regla existente. 3. Librerias y metodos invocados: llama a ABKOR001.executePutPricingRules, que usa PricingRuleRepository.getPricingRuleById, getDetailsByRuleId, hasActiveChildren, fillDetailValues, syncDetails, insertPricingRule, insertDetails y la actualizacion JDBC segun la rama, ademas de PricingRuleValidator.validatePut y PricingRuleDuplicateValidator.checkIfPricingRuleAlreadyExistsForPut. 4. Errores y acciones posteriores: convierte a advice los errores de inexistencia, regla inactiva, estado invalido, regla SYC con hijos, fecha de inicio no futura, cambios restringidos, tipo invalido, duplicidad, solapamiento de medios de pago, detail inexistente y fallos de base de datos. Al volver a la transaccion, si hay advices fija Severity.EWR. 5. Salidas y condiciones de asignacion: la transaccion siempre invoca setPricingruleresponse(pricingRule) sin guarda previa por null. Cuando la libreria devuelve un DTO, la salida contiene la regla modificada con details.value resueltos; si la rama era SYC devuelve la nueva version creada y, si no, la regla actualizada.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACION SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACION SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACION SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT004",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR001",
+        "Method": "executePutPricingRules",
+        "Description": "Busca la pricing rule existente, valida restricciones y duplicados, resuelve details.value y actualiza la regla o crea una nueva version segun el estado actual."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10000405",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule with id: %s not found"
+      },
+      {
+        "Error Code": "ABKO10000407",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "The pricing rule with id %s is inactive and cannot be modified"
+      },
+      {
+        "Error Code": "ABKO10000408",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only rules in state PAA, PAU, REJ, SYE or SYC can be modified."
+      },
+      {
+        "Error Code": "ABKO10000417",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "The pricing rule with id %s is in SYC state and has child rules, so it cannot be modified directly"
+      },
+      {
+        "Error Code": "ABKO10000413",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Start date can not be before than current date"
+      },
+      {
+        "Error Code": "ABKO10000414",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Only settlement detail, fee value and effective date start date can be modified for synchronized rules"
+      },
+      {
+        "Error Code": "ABKO10000416",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing rule type %s cannot be modified. Only V, R or P are allowed"
+      },
+      {
+        "Error Code": "ABKO10010401",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010415",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Error de conexion con la base de datos"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifica la pricing rule que se busca y se modifica."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Contiene los datos solicitados para modificar la pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Se usa para validar restricciones de modificacion, comprobar duplicados y actualizar la regla."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Agrupa los datos de fee usados en la validacion de duplicados y en la actualizacion de la regla."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Se envia sin transformacion dentro de pricingRuleRequest.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Se usa en la validacion de duplicados y en la actualizacion de la regla."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Agrupa las fechas validadas y usadas para actualizar la vigencia de la regla."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Define la fecha de inicio que debe ser futura para permitir la modificacion."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Se envia sin transformacion dentro de pricingRuleRequest.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Se envia sin transformacion dentro de pricingRuleRequest.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Se envia sin transformacion dentro de pricingRuleRequest.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Se envia sin transformacion dentro de pricingRuleRequest.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Se envia sin transformacion dentro de pricingRuleRequest.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Agrupa los details usados para validar duplicados, resolver values y sincronizar altas y bajas de la regla."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifica la entidad de detalle que se valida y cuya descripcion se resuelve antes de persistir."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Determina el tipo de entidad usado en la validacion de duplicados y en la resolucion de details."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Si llega null y la regla actual lo tiene informado, se copia desde la regla existente antes de actualizar."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Si llega null y la regla actual lo tiene informado, se copia desde la regla existente antes de actualizar."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Si llega null y la regla actual lo tiene informado, se copia desde la regla existente antes de actualizar."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRuleResponse",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "La transaccion invoca siempre el setter APX de pricingRuleResponse sin guarda previa por null; cuando la libreria devuelve un DTO, contiene la pricing rule modificada o la nueva version creada."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Devuelve el id de la regla modificada; si la regla original estaba en SYC informa el nuevo id generado y, en otro caso, el id actualizado."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Devuelve el nombre de la regla modificada dentro de pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.fee."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Se devuelve sin transformacion dentro de pricingRuleResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Devuelve los details de la regla modificada despues de resolver cada details.value antes de persistir."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Devuelve el identificador de cada detail dentro de pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Devuelve el tipo de entidad de cada detail dentro de pricingRuleResponse.details."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Devuelve el value resuelto en base de datos para cada detail antes de persistir la modificacion."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Devuelve el valor efectivo de precedenceType despues de conservar el existente cuando el input llega null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Devuelve el valor efectivo de progressiveType despues de conservar el existente cuando el input llega null."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Devuelve el estado PAU asignado por la libreria a la regla modificada o a la nueva version creada."
+      },
+      {
+        "Name of APX field": "pricingRuleResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Devuelve el valor efectivo de comments despues de conservar el existente cuando el input llega null."
+      }
+    ]
+  }
+}

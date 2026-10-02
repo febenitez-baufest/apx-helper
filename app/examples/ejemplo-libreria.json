@@ -1,0 +1,110 @@
+{
+  "LIBRARY - FUNCTIONAL GROUPING DESCRIPTION": "Agrupa las operaciones de consulta y persistencia de eventos biométricos.",
+  "TECHNICAL DATA": {
+    "Library Identifier": "ADVSR500",
+    "Visibility": "Public",
+    "Library Type": "On-line",
+    "For other, indicate": ""
+  },
+  "EXECUTE - METHODS SUMMARY": [
+    {
+      "Method name": "executeSaveBiometricEvents",
+      "Brief description": "Persiste una lista de eventos biométricos.",
+      "DESCRIPTION OF THE FUNCTIONALITY": "Valida el DTO recibido, normaliza los campos y persiste los eventos en Couchbase mediante el conector interno.",
+      "Accessed libraries": [
+        {
+          "Library Identifier": "ADVSR510",
+          "Country": "Common",
+          "Method": "executeGetDeviceCatalog",
+          "Description": "Valida que el dispositivo del evento exista en el catálogo."
+        }
+      ],
+      "Other accesses": [
+        {
+          "Access Type": "Proxy Service",
+          "Country": "Common",
+          "Identifier": "advs-biometric-events-api",
+          "Access": "POST /v0/biometric-events",
+          "Description": "Alta de eventos biométricos en el repositorio central."
+        }
+      ],
+      "Error Management": [
+        {
+          "Error Code": "ADVS00060010",
+          "Description of the error situation": "El DTO de entrada no contiene eventos."
+        },
+        {
+          "Error Code": "ADVS00080011",
+          "Description of the error situation": "Error al invocar el servicio de alta de eventos."
+        },
+        {
+          "Error Code": "ADVS00040012",
+          "Description of the error situation": "Alguno de los eventos ya existía y fue descartado."
+        }
+      ],
+      "Event that is generated": [],
+      "PARAMETERS": {
+        "Input Parameters": [
+          {
+            "Name of APX field": "biometricEventsDTO",
+            "Mandatory?": "Yes",
+            "Format Type": "bean",
+            "Description": "DTO con la lista de eventos a persistir."
+          }
+        ],
+        "Output Parameters": []
+      }
+    },
+    {
+      "Method name": "executeGetBiometricEvents",
+      "Brief description": "Recupera los eventos biométricos de un cliente.",
+      "DESCRIPTION OF THE FUNCTIONALITY": "Consulta el repositorio de eventos por identificador de cliente y devuelve la lista ordenada por fecha descendente.",
+      "Accessed libraries": [],
+      "Other accesses": [
+        {
+          "Access Type": "MongoDB",
+          "Country": "Common",
+          "Identifier": "advsBiometricEventsTemplate",
+          "Access": "find(customerId)",
+          "Description": "Lectura de la colección de eventos biométricos."
+        }
+      ],
+      "Error Management": [
+        {
+          "Error Code": "ADVS00060020",
+          "Description of the error situation": "No existen eventos para el cliente indicado."
+        }
+      ],
+      "Event that is generated": [
+        {
+          "Functional name": "Consulta de eventos biométricos",
+          "Technical Identifier": "ADVS-EVT-QUERY"
+        }
+      ],
+      "PARAMETERS": {
+        "Input Parameters": [
+          {
+            "Name of APX field": "customerId",
+            "Mandatory?": "Yes",
+            "Format Type": "string",
+            "Description": "Identificador único del cliente."
+          },
+          {
+            "Name of APX field": "fromDate",
+            "Mandatory?": "No",
+            "Format Type": "date",
+            "Description": "Fecha inicial del rango de consulta."
+          }
+        ],
+        "Output Parameters": [
+          {
+            "Name of APX field": "biometricEventsDTO",
+            "Mandatory?": "Yes",
+            "Format Type": "bean",
+            "Description": "DTO con los eventos encontrados."
+          }
+        ]
+      }
+    }
+  ]
+}

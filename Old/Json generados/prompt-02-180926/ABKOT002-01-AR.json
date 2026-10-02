@@ -1,0 +1,285 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "transaction transaction to obtain a price rule by your id",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: the transaction obtains input parameter pricingRuleId from the request context. If pricingRuleId is not null and is negative, it logs a validation error, adds advice code ABKO00000050, and sets warning severity. 2. Decisions and branches: after the negative-id validation branch, the flow continues and always invokes the pricing rule lookup library with the current pricingRuleId. If the library returns null, the transaction follows the no-data branch; otherwise it keeps the retrieved DTO for output assignment. 3. Libraries and invoked methods: the transaction gets service library ABKOR000 and invokes executeGetPricingRuleById(pricingRuleId). That library calls the database query identified as abko.getPricingRuleByIdMethodQuery, returns null when no rows are found, and when data exists maps the first row into PricingRuleGetDTO, including id, name, active flag, status, type, creationDate, fee, effectiveDate, activity, segment, settlement, paymentMethods, customAttributes, and the by-id fields proggresiveType, precedence, parentPricingRuleId, version, and comment. 4. Errors and follow-up actions: if pricingRuleId is negative, the transaction emits advice ABKO00000050 with warning severity. If the library returns null, the transaction emits advice ABKO00000040 with warning severity. No additional library advice propagation is present in the analyzed reachable flow. 5. Outputs and assignment conditions: the transaction logs the retrieved DTO and assigns output pricingRule with setPricingrule(priceRule), so the output carries the DTO returned by the library, including a null value when the library did not find data.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT002",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR000",
+        "Method": "executeGetPricingRuleById",
+        "Description": "Obtains a pricing rule by its identifier from the database and maps the first result into PricingRuleGetDTO, including related entities, payment methods, custom attributes, and by-id fields."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO00000050",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "Invalid parameter: pricingRuleId must be non-negative."
+      },
+      {
+        "Error Code": "ABKO00000040",
+        "Severity": "04 - WARNING",
+        "Description of the error situation": "No Data Founded."
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleId",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Identifies the pricing rule to retrieve through ABKOR000.executeGetPricingRuleById."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRule",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Returns the pricingRule DTO produced by the library without additional transformation in the transaction."
+      },
+      {
+        "Name of APX field": "pricingRule.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the pricing rule identifier mapped by the library into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the pricing rule name mapped by the library into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.status",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the pricing rule status mapped by the library into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.type",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the pricing rule type mapped by the library into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.active",
+        "Mandatory?": "Yes",
+        "APX data type": "boolean",
+        "Description": "Returns whether the pricing rule is active, derived by the library from ACTIVE_TYPE."
+      },
+      {
+        "Name of APX field": "pricingRule.action",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the value carried in pricingRule.action within the pricingRule DTO assigned by the transaction without additional transformation."
+      },
+      {
+        "Name of APX field": "pricingRule.creationDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Returns the creation date mapped by the library into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.proggresiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the progressive type mapped by the by-id library query into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.precedence",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the precedence mapped by the by-id library query into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.parentPricingRuleId",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Returns the parent pricing rule identifier mapped by the by-id library query into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.version",
+        "Mandatory?": "No",
+        "APX data type": "long",
+        "Description": "Returns the entity version mapped by the by-id library query into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.comment",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the comment mapped by the by-id library query into pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.fee",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Returns the fee structure mapped by the library inside pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the fee type derived by the library from FEE_TYPE inside pricingRule.fee."
+      },
+      {
+        "Name of APX field": "pricingRule.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Returns the fee value mapped by the library inside pricingRule.fee."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Returns the effectiveDate structure mapped by the library inside pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Returns the start date mapped by the library inside pricingRule.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "Returns the end date mapped by the library inside pricingRule.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Returns the recurrenceTimes list contained in pricingRule.effectiveDate within the pricingRule DTO assigned by the transaction without additional transformation."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the day value carried in each pricingRule.effectiveDate.recurrenceTimes element within the pricingRule DTO assigned by the transaction without additional transformation."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Returns the startHour value carried in each pricingRule.effectiveDate.recurrenceTimes element within the pricingRule DTO assigned by the transaction without additional transformation."
+      },
+      {
+        "Name of APX field": "pricingRule.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Returns the endHour value carried in each pricingRule.effectiveDate.recurrenceTimes element within the pricingRule DTO assigned by the transaction without additional transformation."
+      },
+      {
+        "Name of APX field": "pricingRule.activity",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Returns the first mapped activity inside pricingRule when the library builds the response."
+      },
+      {
+        "Name of APX field": "pricingRule.activity.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the activity identifier mapped by the library inside pricingRule.activity."
+      },
+      {
+        "Name of APX field": "pricingRule.activity.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the activity name mapped by the library inside pricingRule.activity."
+      },
+      {
+        "Name of APX field": "pricingRule.settlement",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Returns the settlement structure mapped by the library inside pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.settlement.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the settlement identifier mapped by the library inside pricingRule.settlement."
+      },
+      {
+        "Name of APX field": "pricingRule.settlement.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the settlement name mapped by the library inside pricingRule.settlement."
+      },
+      {
+        "Name of APX field": "pricingRule.segment",
+        "Mandatory?": "No",
+        "APX data type": "dto",
+        "Description": "Returns the segment structure mapped by the library inside pricingRule."
+      },
+      {
+        "Name of APX field": "pricingRule.segment.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the segment identifier mapped by the library inside pricingRule.segment."
+      },
+      {
+        "Name of APX field": "pricingRule.segment.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the segment name mapped by the library inside pricingRule.segment."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Returns the payment methods list mapped by the library from the aggregated database values."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the payment method identifier mapped by the library for each paymentMethods element."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods.attributeName",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the payment method attribute name mapped by the library for each paymentMethods element."
+      },
+      {
+        "Name of APX field": "pricingRule.paymentMethods.category",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Returns the payment method category mapped by the library for each paymentMethods element."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Returns the custom attributes list mapped by the library from the aggregated database values."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Returns the custom attribute identifier mapped by the library for each customAttributes element."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes.name",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the custom attribute name mapped by the library for each customAttributes element."
+      },
+      {
+        "Name of APX field": "pricingRule.customAttributes.value",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returns the custom attribute value mapped by the library for each customAttributes element."
+      }
+    ]
+  }
+}

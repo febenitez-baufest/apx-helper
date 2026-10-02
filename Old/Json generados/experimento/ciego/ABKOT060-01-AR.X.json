@@ -1,0 +1,320 @@
+{
+  "TRANSACTION - FUNCTIONAL DESCRIPTION": "Transaction to execute the creation of the massive pricing rules",
+  "EXECUTION FLOWS - DETAILED DESCRIPTION": "1. Input and validations: execute() reads pricingRuleRequest and passes it to ABKOR001.executePostMassivePricingRules. The library rejects a null request or a null details list, requires at least two ACT details, rejects duplicated ACT ids or details without entityType or id, validates that effectiveDate.endDate is not before effectiveDate.startDate, checks duplicate pricing rules, and resolves each detail value before inserting data. 2. Decisions and branches: buildMassivePricingRules separates non-ACT and non-CUS details as commonDetails, then creates one pricing rule per ACT detail by copying the input pricing rule without details, copying the common details, and adding the current ACT detail. Duplicate validation branches between exact matches, payment method overlap, regulated duplicates, or continuation when no conflict exists. 3. Invoked libraries and methods: execute() calls ABKOR001.executePostMassivePricingRules, which invokes validateMassivePricingRuleRequest, buildMassivePricingRules, validatePostPricingRule for each generated rule, PricingRuleRepository.insertAudit, PricingRuleRepository.insertMassiveCustomAttribute, and persistNewPricingRule to insert each pricing rule and its details. 4. Errors and subsequent actions: executePostMassivePricingRules converts PricingRuleException into advices with codes ABKO10010420, ABKO10010421, ABKO10010422, ABKO10000404, ABKO10010401, ABKO10010402, ABKO10010415, ABKO10010004, and ABKO00000010, then returns an empty list. After execute() receives the library response, assignSeverityError() sets Severity.EWR when getAdviceList() is not empty. 5. Outputs and assignment conditions: execute() always calls setPricingrulesresponse with the list returned by the library. When no PricingRuleException is raised, each returned element contains the generated pricing rule id from persistNewPricingRule, the copied effectiveDate, fee, precedenceType, progressiveType, comments, and pricingRuleType, plus the copied details after fillDetailValues resolves their value and a CUS detail with value MASIVA is added.",
+  "TECHNICAL DATA": {
+    "Country": "AR",
+    "Version": "01",
+    "Migration - Origin from Host": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Transactional?": "NO HAY INFORMACIÓN SUFICIENTE",
+    "Asynchronous Consumers": [],
+    "Transaction Identifier": "ABKOT060",
+    "Accessed Libraries": [
+      {
+        "Library Identifier": "ABKOR001",
+        "Method": "executePostMassivePricingRules",
+        "Description": "Creates one pricing rule per ACT detail, validates duplicates and dates, resolves detail values, inserts the massive custom attribute, and persists each generated pricing rule."
+      }
+    ],
+    "Error Management": [
+      {
+        "Error Code": "ABKO10010420",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Massive pricing rule creation requires at least two ACT details"
+      },
+      {
+        "Error Code": "ABKO10010421",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Massive pricing rule creation contains duplicated ACT details"
+      },
+      {
+        "Error Code": "ABKO10010422",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Massive pricing rule creation contains an invalid detail"
+      },
+      {
+        "Error Code": "ABKO10000404",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "End date can not be before than Start date"
+      },
+      {
+        "Error Code": "ABKO10010401",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010402",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule with different fee. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010415",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Pricing Rule conflicts with an existing %s rule due to payment method overlap. Existing Rule ID: %s"
+      },
+      {
+        "Error Code": "ABKO10010004",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Detail id: %s does not exist for entity type: %s"
+      },
+      {
+        "Error Code": "ABKO00000010",
+        "Severity": "08 - ERROR WITH ROLLBACK",
+        "Description of the error situation": "Could not insert massive pricing rule custom attribute"
+      }
+    ],
+    "Events to which it is subscribed": []
+  },
+  "PARAMETERS": {
+    "Input Parameters": [
+      {
+        "Name of APX field": "pricingRuleRequest",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Pricing rule request used to create one pricing rule per ACT detail after validation."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.name",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Optional pricing rule name used to name each generated pricing rule; when blank, PricingRuleDTO generates the name before the copy."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Fee data used to copy the fee into each generated pricing rule and to validate duplicates by fee type and value."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type used to compare duplicate pricing rules and persist each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee value used to compare duplicate pricing rules and persist each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Effective period used to validate dates and copy the effectiveDate into each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Start date used to validate the effective period and persist startingDate for each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date used to validate that the effective period does not finish before the start date and to persist finishDate for each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Recurrence times copied into each generated pricing rule inside effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Day value copied to the generated pricing rule recurrence schedule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Start hour copied to the generated pricing rule recurrence schedule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "End hour copied to the generated pricing rule recurrence schedule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "Detail list used to validate ACT requirements, detect duplicates, resolve output values, and persist each generated pricing rule detail."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Detail identifier used to detect duplicated ACT entries, validate existing combinations, resolve detail values, and persist each detail row."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Detail entity type used to separate ACT details from common details, select duplicate validation logic, resolve the lookup query, and persist each detail row."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Precedence type used to copy and persist the precedenceType of each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Progressive type used to copy and persist the progressiveType of each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Comments used to copy and persist the comments of each generated pricing rule."
+      },
+      {
+        "Name of APX field": "pricingRuleRequest.pricingRuleType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule type used to persist each generated pricing rule, defaulting to V when the input is null."
+      }
+    ],
+    "Output Parameters": [
+      {
+        "Name of APX field": "pricingRulesResponse",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "List of generated pricing rules returned by the library, one element per ACT detail validated and persisted; empty when a PricingRuleException is converted into advice."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Pricing rule identifier assigned from the database sequence in persistNewPricingRule."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.name",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Pricing rule name copied from the source rule when each massive pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.effectiveDate",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Effective period copied into each generated pricing rule before persistence."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.effectiveDate.startDate",
+        "Mandatory?": "Yes",
+        "APX data type": "date",
+        "Description": "Start date copied from pricingRuleRequest.effectiveDate.startDate when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.effectiveDate.endDate",
+        "Mandatory?": "No",
+        "APX data type": "date",
+        "Description": "End date copied from pricingRuleRequest.effectiveDate.endDate when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.effectiveDate.recurrenceTimes",
+        "Mandatory?": "No",
+        "APX data type": "compound",
+        "Description": "Recurrence times returned without transformation inside pricingRulesResponse.effectiveDate."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.effectiveDate.recurrenceTimes.day",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Returned without transformation inside pricingRulesResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.effectiveDate.recurrenceTimes.startHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Returned without transformation inside pricingRulesResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.effectiveDate.recurrenceTimes.endHour",
+        "Mandatory?": "No",
+        "APX data type": "double",
+        "Description": "Returned without transformation inside pricingRulesResponse.effectiveDate.recurrenceTimes."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.fee",
+        "Mandatory?": "Yes",
+        "APX data type": "dto",
+        "Description": "Fee data copied into each generated pricing rule before persistence."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.fee.feeType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Fee type copied from pricingRuleRequest.fee.feeType when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.fee.value",
+        "Mandatory?": "Yes",
+        "APX data type": "double",
+        "Description": "Fee value copied from pricingRuleRequest.fee.value when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.details",
+        "Mandatory?": "Yes",
+        "APX data type": "compound",
+        "Description": "List of copied and enriched details returned for each generated pricing rule, including the ACT detail, the common non-CUS details, and the added CUS detail."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.details.id",
+        "Mandatory?": "Yes",
+        "APX data type": "long",
+        "Description": "Detail identifier copied from the source detail, or generated as customAttributeId for the added CUS detail."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.details.entityType",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Detail entity type copied from the source detail, or set to CUS for the added massive custom attribute detail."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.details.value",
+        "Mandatory?": "Yes",
+        "APX data type": "string",
+        "Description": "Detail value filled from the repository query configured for the entity type, or set to MASIVA for the added CUS detail."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.precedenceType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Precedence type copied from pricingRuleRequest.precedenceType when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.progressiveType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Progressive type copied from pricingRuleRequest.progressiveType when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.status",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Status copied from the source pricing rule status when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.comments",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Comments copied from pricingRuleRequest.comments when each generated pricing rule is built."
+      },
+      {
+        "Name of APX field": "pricingRulesResponse.pricingRuleType",
+        "Mandatory?": "No",
+        "APX data type": "string",
+        "Description": "Pricing rule type copied from pricingRuleRequest.pricingRuleType, defaulting to V when the source value is null."
+      }
+    ]
+  }
+}
